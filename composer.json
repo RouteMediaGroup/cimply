@@ -1,0 +1,24 @@
+{
+    "name": "routemediagroup/cimply",
+    "description": "Cimply.Work is a PHP-Tool to creating business-solutions for digitization and automation.",
+    "keywords": ["framework"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Eckebrecht",
+            "email": "direkt@route-media.info"
+		},
+		{
+			"name": "Cimply.Work",
+			"homepage": "http://cimply.work"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {"Cimply\\": "vendor\\routemediagroup\\cimply\\cimply"}
+    },
+    "require": {
+        "php": "^7.2"
+    }
+}

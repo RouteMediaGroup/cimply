@@ -1,0 +1,58 @@
+Crossing: true
+Compress: true
+Devmode: false
+Debug: false
+Display: true
+
+Decrypt:
+    state:  true
+    salt: ''
+    securecode: true
+
+AllowSCTags: false
+
+Locale: de_DE
+Symlink: true
+
+System:
+    useTemplateFor:         [html, application, js, ts, csv, pdf, css, svg]
+    useParseFiles:          [text, image, application, ts, csv, pdf]
+    useNotTranslationFor:   [application/json]
+    useNotCachingFor:       [application/json]
+    parsingImageFiles:      [svg,csv,pdf]
+    directories:
+        console:            "{app}/console/"
+        projects:           "{app}/projects/"
+        stylesheets:        "{app}/projects/css/"
+        modules:
+            user:           "cim/app/logic/user/modules/"
+            public:         "cim/app/logic/public/modules/"
+            core:           "cim/app/logic/core/modules/"
+        uploads:            "cim/app/files/"
+        cache:              "cim/app/cache/"
+        logs:               "cim/app/logs/"
+
+#MVC Settings
+MVC:
+    model:                  "projects/model/"
+    view:                   "projects/view/"
+    controller:             "projects/controller/"
+
+Tpl:
+    default:    'html'
+    twig:       'twig'
+    tpl:        'tpl'
+
+Pattern:
+    Libs:       '/\$::(.+?){(.+?)\}/is'
+    Modul:		'/\{\-\>(.+?)\}/is'
+    Param:      '/\[\+(.+?)\+\]/is'
+    Attributes: '/(?P<name>\w+.+\w|\w):(?P<value>\w+.+\w|\w)|\w+.+\w|\w/is'
+    Trans:      '/\<translate\>(.+?)\<\/translate>/is'
+    
+Translations:
+    This %0 is not available:
+        de_DE: 'Dieser %s steht momentan nicht zur Verfügung.'
+    
+    service:
+        de_DE: 'Dienst'

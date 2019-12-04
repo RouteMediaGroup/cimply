@@ -1,0 +1,42 @@
+entities:
+    process:
+        process_id:
+            datatype:           253
+            length:             36
+            index:              1
+            autoincrement:      false
+            markup:
+                type:           'hidden'
+                namespace:      formData
+        process_id:
+            datatype:           3
+            length:             11
+            autoincrement:      false
+            markup:
+                type:           'hidden'
+                namespace:      formData
+        process_name:
+            datatype:           253
+            length:             255
+            autoincrement:      false
+            markup:
+                namespace:      formData
+                attr:
+                    class:      col-lg-12 col-md-12 col-sm-12 col-xs-12 marpad-clear
+                label:
+                    name:       Process
+                    attr:       class="grid_12"
+                class:          form-control border-gradient boxinput ng-pristine ng-untouched ng-valid ng-not-empty
+        process_link:
+            datatype:           253
+            length:             255
+            autoincrement:      false
+            markup:
+                type:           Process-Link
+                attr:
+                    class:      col-lg-12 col-md-12 col-sm-12 col-xs-12 marpad-clear
+                label:
+                    name:       Passwort* <small>(min. 6 Zeichen)</small>
+                    attr: 
+                        class:  grid_12
+                class:          form-control border-gradient boxinput ng-pristine ng-untouched ng-valid ng-not-empty

@@ -1,0 +1,53 @@
+DevMode: true
+Debug: true
+Symlink: true
+SSL: true
+Decrypt:
+    state:  false
+    salt: '42'
+    securecode: false
+
+Crypto:
+    salt: "AES-128-CBC"
+    pepper: "0x42"
+    passphrase: "/\/\A$T3R<>FTHEU/\/iV3R$3"
+
+Local: de_DE
+
+Assembly:
+    projectCtrl:            ".\cimply\app\projects\%project%\controller"
+    baseCtrl:               ".\cimply\app\base"
+    
+App:
+    baseUrl:                false
+    baseName:               "cimply"
+    index:                  "index"
+    project:                "DocDetection"
+    projectPath:            "./"
+    namespace:              "cimply\app\projects\%project%\app"
+    database:               "prod"
+    assets:                 "assets"
+    commonDir:		        "common"
+    cacheDir:               ".\cache"
+    debugMode:              true
+
+System:
+    useTemplateFor:         [html,css,js,htc]
+    useParseFiles:          [application/javascript]
+    useNotTranslationFor:   [application/json]
+    useNotCachingFor:       [application/json]
+
+Collections:
+    
+Themes:
+
+DBConnect:
+    default:
+        driver:     pdo
+        type:		mysql
+        host:		localhost
+        user:		root
+        pass:       ''
+        name:		''
+        charset:    UTF8
+        options:    {'PDO::ATTR_CURSOR': '\PDO::CURSOR_FWDONLY', 'PDO::MYSQL_ATTR_USE_BUFFERED_QUERY': 'true', 'PDO::MYSQL_ATTR_INIT_COMMAND': "SET NAMES 'utf8'"}

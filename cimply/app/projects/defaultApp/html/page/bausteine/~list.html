@@ -1,0 +1,30 @@
+[+templates+]
+<div id="infobox" ng-show = "infoBoxShow">
+    <h3>Zuletzt geändert</h3>
+    <div class="content">
+        <span>am {{currentInfoData.DatumZeit}}</span><br />
+        <span>von {{currentInfoData.Ersteller}}</span>
+    </div>
+</div>
+<div id="itemFilter" class="row">
+    <div class="col-sm-8">
+        <div>
+            <span><a ng-click="">ALLE</a></span>
+            <span ng-repeat = "item in bereiche" class="sep"><a ng-click="">{{item.Anzeige | uppercase}}</a></span>            
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="fright">
+            <span><a ng-click="">ALLE "SICHTBAR" SCHALTEN <span class="set-icon"><icon class="eye"></icon></span></a></span>
+        </div>
+    </div>
+</div>
+<div class="row scroller">
+    <div class="col-sm-12">
+        <div ui-tree id="tree-root" data-drag-enabled="tree.enabled" data-max-depth="2" data-drag-delay="10">
+            <ol ui-tree-nodes="" ng-model="bausteinListe" class="sortable ui-sortable mjs-nestedSortable-branch mjs-nestedSortable-expanded">
+                <li ng-repeat="node in bausteinListe" ui-tree-node ng-include="'nodes_main.html'" style="display: list-item;" class="mjs-nestedSortable-branch mjs-nestedSortable-expanded" ng-show="visible(node);"></li>
+            </ol>
+        </div>
+    </div>
+</div>
