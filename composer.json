@@ -6,19 +6,35 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Michael Eckebrecht",
+            "name": "RouteMedia",
             "email": "direkt@route-media.info"
-		},
-		{
-			"name": "Cimply.Work",
-			"homepage": "http://cimply.work"
+	},
+	{
+	    "name": "Cimply.Work",
+	    "homepage": "http://cimply.work"
         }
     ],
     "minimum-stability": "dev",
     "autoload": {
-        "psr-4": {"Cimply\\": "vendor\\routemediagroup\\cimply\\cimply"}
+        "psr-4": {
+            "Cimply\\": "cimply/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cimply\\Console\\": "cimply/cim/"
+        }
     },
     "require": {
-        "php": ">=7.2"
+        "php": "^7.2.*" || ^8.0",
+        "ext-pcre": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5.20 || ^8.5.2 || ^9.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        }
     }
 }
