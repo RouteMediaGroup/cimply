@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-	    "Cimply\\Work\\": "cimply\"
+	    "Cimply\\Work\\": "cimply/"
         }
     },
     "autoload-dev": {
