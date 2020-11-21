@@ -17,13 +17,14 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Cimply\\": "cimply/app.php"
+            "Cimply\\": "cimply/cimply"
+	    "Cimply\\Work": "cimply/app.php"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Cimply\\Cli\\": "cimply/cli.php",
-	    "Cimply\\Console\\": "cimply/cli.php"
+	    "Cimply\\Console\\": "cimply/console.php"
         }
     },
     "require": {
@@ -34,7 +35,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "v3.0.0.1"
+            "dev-master": "3.0.0.1"
         }
     }
 }
