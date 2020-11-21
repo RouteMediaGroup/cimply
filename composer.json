@@ -16,8 +16,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "Cimply\\": "cimply/cimply",
-	    "Cimply\\Work\\": "cimply/app.php"
+            "Cimply\\": "cimply/app.php",
+	    "Cimply\\Work\\": "cimply/cimply/work.php"
         }
     },
     "autoload-dev": {
