@@ -17,8 +17,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Cimply\\": "cimply/work.php",
-	    "Cimply\\App": "cimply/app/"
+            "Cimply\\": "cimply/app.php"
         }
     },
     "autoload-dev": {
