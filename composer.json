@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Cimply\\": "cimply/Work.php"
+            "Cimply\\": "/cimply"
         }
     },
     "autoload-dev": {
@@ -33,7 +33,7 @@
     },
     "minimum-stability": "dev",
     "extra": {
-            "branch-alias": {
+        "branch-alias": {
             "dev-master": "3.0.1.2-dev"
         },
 	"branch-version": "3.0"
