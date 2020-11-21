@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-	    "Cimply\\Work\\": "cimply"
+	    "Cimply\\Work\\": "cimply\"
         }
     },
     "autoload-dev": {
@@ -34,7 +34,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0.0.5-dev"
+            "dev-master": "3.0.0.6-dev"
         },
 	"branch-version": "3.0"
     }
