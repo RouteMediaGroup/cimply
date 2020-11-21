@@ -16,14 +16,14 @@
     ],
     "autoload": {
         "psr-4": {
-            "Cimply\\": "cimply/"
-	        "Cimply\\Work\\": "cimply/work.php"
+            "Cimply\\": "cimply/",
+	    "Cimply\\Work\\": "cimply/work.php"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Cimply\\Cli\\": "cimply/cli.php",
-	        "Cimply\\Console\\": "cimply/console.php"
+	    "Cimply\\Console\\": "cimply/console.php"
         }
     },
     "require": {
