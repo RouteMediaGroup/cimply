@@ -16,7 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Cimply\\": "src/"
+            "Cimply\\": "app.php"
         }
     },
     "autoload-dev": {
@@ -34,7 +34,7 @@
     "minimum-stability": "dev",
     "extra": {
             "branch-alias": {
-            "dev-master": "3.0.0.9-dev"
+            "dev-master": "3.0.1.0-dev"
         },
 	"branch-version": "3.0"
     }
