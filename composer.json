@@ -17,12 +17,14 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Cimply\\": "cimply/"
+            "Cimply\\": "cimply/work.php"
+	    "Cimply\\App": "cimply/app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Cimply\\Console\\": "cimply/cim/"
+            "Cimply\\Cli\\": "cimply/cli.php",
+	    "Cimply\\Console\\": "cimply/cli.php"
         }
     },
     "require": {
