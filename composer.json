@@ -8,21 +8,22 @@
         {
             "name": "RouteMedia",
             "email": "direkt@route-media.info"
-	},
-	{
-	    "name": "Cimply.Work",
-	    "homepage": "http://cimply.work"
+        },
+        {
+            "name": "Cimply.Work",
+            "homepage": "http://cimply.work"
         }
     ],
     "autoload": {
         "psr-4": {
-	    "Cimply\\Work\\": "cimply/"
+            "Cimply\\": "cimply/"
+	        "Cimply\\Work\\": "cimply/work.php"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Cimply\\Cli\\": "cimply/cli.php",
-	    "Cimply\\Console\\": "cimply/console.php"
+	        "Cimply\\Console\\": "cimply/console.php"
         }
     },
     "require": {
@@ -33,8 +34,8 @@
     },
     "minimum-stability": "dev",
     "extra": {
-        "branch-alias": {
-            "dev-master": "3.0.0.6-dev"
+            "branch-alias": {
+            "dev-master": "3.0.0.7-dev"
         },
 	"branch-version": "3.0"
     }
