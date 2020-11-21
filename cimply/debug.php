@@ -1,7 +1,7 @@
 <?php
 namespace Cimply {
     use Cimply\System\Settings;
-    class Program extends \Exception {
+    class Debug extends \Exception {
         static $loader;
         function __construct($assembly = []) {
             self::autoLoader(function ($usings = []) use($assembly) {
