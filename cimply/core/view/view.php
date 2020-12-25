@@ -2,9 +2,9 @@
 namespace Cimply\Core\View {
 
     /**
-     * Description of CIM
+     * Description of CIMPLY.WORK
      *
-     * @author MikeCorner
+     * @author Michael Eckebrecht
      */
     use \Cimply\System\Helpers as Helper;
     use \Cimply\Core \{
@@ -102,6 +102,23 @@ namespace Cimply\Core\View {
             return self::$vars ?? null;
         }
 
+        //Set Assign Params
+        public static function Assign($value) : void
+        {
+            $vars = [];
+            foreach ($value as $key => $val) {
+                if (is_array($val)) {
+                    foreach ($val as $k => $v) {
+                        $vars[$key][$k] = $v;
+                    }
+                } else {
+                    $vars[$key] = $val;
+                }
+            }
+            //self::$vars = [self::$vars, ...$vars];
+            self::$vars = array_merge(self::$vars, $vars);
+        }
+
         function isExternalFile() : bool
         {
             return $this->externalFile;
@@ -136,13 +153,13 @@ namespace Cimply\Core\View {
          * Render View
          *
          */
-        public static function Render($template = null, $passthru = false, $encode = null): void
+        public static function Render($template = null, $passthru = false, $secure = null): void
         {
             if (!headers_sent() && isset(self::$mimeType)) {
                 header('Content-type:' . self::$mimeType);
             }
             $template = is_array($template) ? self::EncodeBeforeRendering($template) : self::ParseTplVars($template);
-            self::Show($template ?? self::$view, $passthru, $encode);
+            self::Show($template ?? self::$view, $passthru, $secure);
         }
 
         /**
@@ -156,7 +173,7 @@ namespace Cimply\Core\View {
             return \JsonDeEncoder::Encode($template);
         }
 
-        static function Show($body = "", $loopThrough = false, $secure = null, $mime = null) : string
+        static function Show($body = "", $passthru = false, $secure = null, $mime = null) : string
         {
             $scope = Scope::Cast(self::GetStaticProperty('scope'));
             $fileType = $scope->getType();
@@ -166,16 +183,15 @@ namespace Cimply\Core\View {
             $toTranslation = self::GetStaticProperty(SystemSettings::USENOTTRANSLATIONFOR);
             !((isset($toTranslation)) && in_array($scope->getType(), $toTranslation)) || (empty($toTranslation)) ? $body = Translate::GetTranslastion($body) : null;
             $body = View::ParseTplVars($body);
-            ($secure === 1 || $secure === true) ? $body = (function($body) use($scope, $fileType, $mimeType) {
+            ($secure === 1 || $secure === true) ? $body = (function($body) use($scope, $fileType, $mimeType, $caching) {
                 $salt = self::GetStaticProperty(CryptoSettings::SALT);
                 $pepper = md5(time().self::GetStaticProperty(CryptoSettings::PEPPER));
-                Helper::Callback(["Scope" => $scope, "fileTyp" => $fileType, "mimeTyp" => $mimeType, 'hash' => $pepper, "caching" => $caching, "data" => (\Crypto::Encrypt($body, $salt, $pepper))], 'localStorage') .'; ';
-                return null;
+                return \JsonDeEncoder::Encode(["scope" => serialize($scope), "fileTyp" => $fileType, "mimeTyp" => $mimeType, 'hash' => $pepper, "caching" => $caching, "vars" => (\Crypto::Encrypt(\JsonDeEncoder::Encode(self::$vars), $salt, $pepper)), "data" => (\Crypto::Encrypt($body, $salt, $pepper))]);
             })($body) : null;
             
             $mime ? header("Content-Type: {$mime}") : $mime;
             $output = $body;
-            if (!($loopThrough)) {
+            if (!($passthru)) {
                 die($output);
             }
             return $output;
@@ -199,6 +215,7 @@ namespace Cimply\Core\View {
         public static function ParseTplView($template = null) : string
         {
             if($template !== null) {
+                $template = self::ParseTplVars($template);
                 @preg_match_all(self::GetStaticProperty(PatternSettings::MODUL), $template, $matches);
                 if (isset($matches[1]) && count($matches[1]) > 0) {
                     //$explAttr = explode(':', $matches[1][0]);
@@ -239,22 +256,6 @@ namespace Cimply\Core\View {
                 $result = self::ParseTplAttr($matches[1][0]);
             }
             return $result;
-        }
-
-        //Set Parameters
-        public static function Assign($value) : void
-        {
-            $vars = [];
-            foreach ($value as $key => $val) {
-                if (is_array($val)) {
-                    foreach ($val as $k => $v) {
-                        $vars[$key][$k] = $v;
-                    }
-                } else {
-                    $vars[$key] = $val;
-                }
-            }
-            self::$vars = array_merge(self::$vars, $vars);
         }
     }
 }

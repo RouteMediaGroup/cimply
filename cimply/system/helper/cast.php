@@ -24,8 +24,8 @@ namespace {
         public static function Cull($mainObject, $selfObject = null, $abstractClass = false) {
             $newObject = null;
             try {
-                is_array($mainObject) ? null : ($mainObject instanceof $selfObject) ? $newObject = $mainObject :
-                    ( (new ReflectionClass($selfObject))->isAbstract() ? $abstractClass = true : $newObject = new $selfObject );
+                is_array($mainObject) ? null : ( ($mainObject instanceof $selfObject) ? $newObject = $mainObject :
+                    ( (new ReflectionClass($selfObject))->isAbstract() ? $abstractClass = true : $newObject = new $selfObject ) );
 
                 /*$newObject = static::recursiveWalker($newObject, $mainObject, $selfObject, $abstractClass);*/
                 foreach((array)$mainObject as $value) {
@@ -68,8 +68,9 @@ namespace {
             }*/
             try {
                foreach((array)$mainObject as $value) {
-                    ($value instanceof $selfObject) ? $newObject = ($abstractClass === true) ? self::iterateAbstractClass($value, $selfObject) : $value
-                    : is_object($value) && $count<= 0 ? $newObject = self::recursiveWalker($newObject, $value, $selfObject, $abstractClass, $count++) : $value;
+                    ($value instanceof $selfObject) ? 
+                        ( $newObject = ($abstractClass === true) ? self::iterateAbstractClass($value, $selfObject) : $value )
+                        : ( ( is_object($value) && $count<= 0 ) ? $newObject = self::recursiveWalker($newObject, $value, $selfObject, $abstractClass, $count++) : $value );
                }
             } catch(\Exception $ex) {
                 throw new \Exception($ex->getMessage());

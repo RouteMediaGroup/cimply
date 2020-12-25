@@ -100,6 +100,15 @@ namespace Cimply\Core\Database\Manager
             $this->statement->execute($this->params);
         }
 
+        /**
+         *
+         * @return Provider
+         */
+        function dbm():Provider
+        {
+            return static::Cast($this);
+        }
+
         #endregion
     }
 }

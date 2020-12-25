@@ -26,12 +26,12 @@ namespace Cimply\App\Projects\DefaultApp {
             $instance->addInstance((new Gui($view)));
 
             //Action
-            View::Cast($instance->getService())->set(Scope::Cast($instance->getService()));
+            View::Cast($instance->getService())->set(Scope::Cast($instance->getService()));           
             $instance->addInstance(new Database(Support::Cast($instance->getService())->getRootSettings(RootSettings::DBCONNECT)));
 
             //Default Annotations
-            View::Assign((self::GetAnnotations($scope->getAction()))->getParameters());
-
+            View::Assign((self::GetAnnotations($scope->getAction() ?? false))->getParameters());
+            
             ($scope->getAction())($instance);
         }
     }

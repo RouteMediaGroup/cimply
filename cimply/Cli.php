@@ -8,7 +8,7 @@ namespace Cimply {
             }
             array_shift($args);
             $path = implode('_', $args);
-            UriManager::ActionPath('/'.($path ? __FUNCTION__.'/'.$path : __FUNCTION__));
+            UriManager::ActionPath( DIRECTORY_SEPARATOR.(($path) ? __FUNCTION__.'/'.$path : DIRECTORY_SEPARATOR.__FUNCTION__) );
             return (bool)(php_sapi_name() === 'cli');
         }
     }

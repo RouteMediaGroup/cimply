@@ -72,7 +72,7 @@ namespace Cimply\Basics {
             } else {
                 $currentRoute = $this->routings[$actionPath];
             }
-            return (isset($currentRoute) ? [$this->actionPath => (array)$currentRoute()] : ['externalFile' => true]);
+            return (isset($currentRoute) ? [$this->actionPath => (array)($currentRoute)($this)] : ['externalFile' => true]);
         }
     }
 }

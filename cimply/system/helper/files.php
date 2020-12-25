@@ -9,6 +9,7 @@ namespace
         static function GetFileContent($filename, $path = false, $options = null, $method = 'GET', $param1 = null, $param2 = null): ?string
         {
             $currentFile = "";
+            $filename = str_replace('\\',DIRECTORY_SEPARATOR, $filename);
             if(\is_file($filename)) {
                 $opts = isset($options) ? $options : array(
                     'http'=>array(
@@ -78,7 +79,7 @@ namespace
                 mkdir(dirname($path), 0777, TRUE);
             }
             */
-            return (bool)file_put_contents($filename, $data, $flags) ?? false;
+            return (bool)file_put_contents(str_replace('\\',DIRECTORY_SEPARATOR, $filename), $data, $flags) ?? false;
         }
 
         static function CacheFile($filePath, $fileName) {

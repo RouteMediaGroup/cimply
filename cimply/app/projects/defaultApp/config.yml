@@ -40,14 +40,3 @@ System:
 Collections:
     
 Themes:
-
-DBConnect:
-    default:
-        driver:     pdo
-        type:		mysql
-        host:		localhost
-        user:		root
-        pass:       ''
-        name:		''
-        charset:    UTF8
-        options:    {'PDO::ATTR_CURSOR': '\PDO::CURSOR_FWDONLY', 'PDO::MYSQL_ATTR_USE_BUFFERED_QUERY': 'true', 'PDO::MYSQL_ATTR_INIT_COMMAND': "SET NAMES 'utf8'"}

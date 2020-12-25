@@ -13,12 +13,12 @@ namespace Cimply\Core\Database\Manager
     use Cimply\Core\Database\{Provider, Enum\FetchStyleList};
     use \Cimply\Core\Model\EntityBase;
     use \Cimply\Interfaces\Database\IProvider;
-	class MySqli extends Provider implements IProvider
+	class SqlSrv extends Provider implements IProvider
 	{
 
         private $bindTypes  = '', $typeSafe   = false;
 
-        function __construct(\mysqli $manager, $sth = null) {
+        function __construct(\PDO $manager, $sth = null) {
             $this->statement = $sth;
             $this->dbm = $manager;
         }
@@ -135,17 +135,9 @@ namespace Cimply\Core\Database\Manager
          */
         function execute(): bool
         {
-            empty($this->params) ? : $this->doBindParam($this->typeSafe, 'bind_param');
-            $this->statement->execute();
-        }
-
-        /**
-         *
-         * @return Provider
-         */
-        function dbm():Provider
-        {
-            return static::Cast($this);
+            //empty($this->params) ? : $this->doBindParam($this->typeSafe, 'bind_param');
+            //$this->statement->execute();
+            return $this->statement ? $this->statement->execute($this->params) : false;
         }
 
         #endregion

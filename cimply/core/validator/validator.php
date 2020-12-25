@@ -45,23 +45,23 @@ namespace Cimply\Core\Validator {
             if(isset($this->validation_rules)) {
                 foreach(new \ArrayIterator($this->validation_rules) as $var => $opt)
                 {
-                    $opt = (object)$opt;
-                    !($opt->required == true) ?? $this->isSet($var);
-
-                    if( array_key_exists('trim', $opt) && $opt->trim == true )
+                    $opt = (array)$opt;
+                    !($opt['required'] == true) ?? $this->isSet($var);
+                    
+                    if( array_key_exists('trim', $opt) && $opt['trim'] == true )
                     {
                         isset($this->source[$var]) && !(empty($this->source[$var])) ? $this->source[$var] = (is_string($this->source[$var]) ? trim( $this->source[$var] ) : $this->source[$var] = \JsonDeEncoder::Encode($this->source[$var])) : $this->source[$var] = null;
                         $this->results[$var] = $this->source[$var];
                     }
 
-                    switch($opt->type)
+                    switch($opt['type'])
                     {
                         case 'email':
-                            $this->checkEMail($var, $opt);
+                            $this->checkEMail($var, (object)$opt);
                             break;
 
                         case 'url':
-                            $this->checkUrl($var, $opt);
+                            $this->checkUrl($var, (object)$opt);
                             break;
 
                         case 'numeric':
@@ -70,7 +70,7 @@ namespace Cimply\Core\Validator {
                         case 'bigint':
                         case 'mediumint':
                         case 'smallint':
-                            $this->checkNumeric($var, $opt);
+                            $this->checkNumeric($var, (object)$opt);
                             break;
 
                         case 'string':
@@ -80,32 +80,32 @@ namespace Cimply\Core\Validator {
                         case 'smallblob':
                         case 'bigblob':
                         case 'text':
-                            $this->checkStrings($var, $opt);
+                            $this->checkStrings($var, (object)$opt);
                         break;
 
                         case 'json':
-                            $this->checkJson($var, $opt);
+                            $this->checkJson($var, (object)$opt);
                         break;
 
                         case 'float': case 'double':
-                            $this->checkFloats($var, $opt);
+                            $this->checkFloats($var, (object)$opt);
                             break;
 
                         case 'bool':
                         case 'bit':
-                            $this->checkBits($var, $opt);
+                            $this->checkBits($var, (object)$opt);
                             break;
 
                         case 'ipv4':
-                            $this->checkIpv4($var, $opt);
+                            $this->checkIpv4($var, (object)$opt);
                             break;
 
                         case 'ipv6':
-                            $this->checkIpv6($var, $opt);
+                            $this->checkIpv6($var, (object)$opt);
                             break;
 
                         case 'Guid':
-                            $this->checkGuid($var, $opt);
+                            $this->checkGuid($var, (object)$opt);
                             break;
                     }
                 }

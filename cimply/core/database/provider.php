@@ -5,7 +5,7 @@ namespace Cimply\Core\Database {
      *
      * QueryManager description.
      *
-     * @version 1.0
+     * @version 3.0
      * @author Michael Eckebrecht
      */
     use \Cimply\Core \{
@@ -89,8 +89,14 @@ namespace Cimply\Core\Database {
          */
         function dbq(string $sql = null, array $params = null)
         {
-            isset($params) ? $this->setParams($params) : null;
-            isset($params) ? $this->prepare($sql) : null;
+            isset($params) ? (function() use($sql, $params) {
+                $this->setParams($params);
+                $this->prepare($sql);     
+            })() : null;
+
+            //isset($params) ? $this->setParams($params) : null;
+            //isset($params) ? $this->prepare($sql) : null;
+
             return $this;
         }
 

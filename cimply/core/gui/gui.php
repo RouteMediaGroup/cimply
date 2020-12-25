@@ -210,9 +210,9 @@ namespace Cimply\Core\Gui {
             $search = array();
             $library = array();
             $directory = array();
-            $libsPattern = View::GetStaticProperty(PatternSettings::LIBS);
+            $libsPattern = View::GetStaticProperty(PatternSettings::LIBS) ?? NULL;
             $scope = Scope::Cast($this->view);
-            if (isset($libsPattern) && in_array($scope->getType(), $this->useTemplateFor)) {
+            if(isset($libsPattern) && in_array($scope->getType(), is_array($this->useTemplateFor) ? $this->useTemplateFor : [])) {
                 preg_match_all($libsPattern, (string) $s, $matches);
                 if (!(empty($matches[1]))) {
                     $search = $matches[0];

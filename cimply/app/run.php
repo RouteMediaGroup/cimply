@@ -12,23 +12,25 @@ namespace Cimply\App {
 
     class Run extends Basics {
         use \Cast;
-        public $isDebug = false, $error = false;
+        public $isDebug = false, $error = false, $callable, $args = [];
         protected $instance = null, $autoloader = null, $projectName = null, $projectPath = null, $settings = null;
         function __construct(...$args) {
             parent::__construct();
             if(!empty($args)) {
-               session_id() === null ? session_id($args[0]) : (session_status() != 1) ? session_start() : true;
+                (session_id() === null) ? session_id($args[0]) : ( (session_status() != 1) ? session_start() : true );
                 $this->instance = ServiceLocator::Cast(null);
                 $this->projectName = $args[0];
                 $this->autoloader = $args[1];
                 $this->projectPath = (str_replace('%project%', $args[0], Settings::ProjectPath));
                 //add instance of project settings
-                $this->settings = $this->instance->addInstance(new Support(array_map(
-                    (function($str) {
-                        return str_replace('%project%', \ucfirst($this->projectName), $str);
-                    }), parent::GetConfig()->loader([$this->projectPath.'config.yml', 'config.yml'], self::$conf) ?? self::$conf
-                    //parent::GetConfig()->loader($this->projectPath.'config.yml', static::$conf) ?? []
-                )));
+                $conf = parent::GetConfig()->loader([$this->projectPath.'config.yml', 'config.yml'], self::$conf) ?? self::$conf;
+                $this->settings = $this->instance->addInstance(new Support(
+                    array_map(
+                        function($values) {
+                            return \JsonDeEncoder::Decode(str_replace('%project%', \ucfirst($this->projectName), \JsonDeEncoder::Encode($values)), true);
+                        }, $conf
+                    )
+                ));
                 $this->isDebug = $this->settings->getSettings([], RootSettings::DEVMODE);
             }
         }
@@ -66,7 +68,7 @@ namespace Cimply\App {
             ($this->autoloader)($this->settings->getAssembly());
             try {
                 $app = $this->settings->getSettings([], AppSettings::PROJECTNAMESPACE);
-				if(class_exists($app) !== true) {
+                if(class_exists($app) !== true) {
                     $this->error = true;
                     throw new \Exception("App can not be run.");
                 }

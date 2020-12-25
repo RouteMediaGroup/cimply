@@ -6,12 +6,11 @@ namespace Cimply {
         static $loader;
         function __construct($assembly = []) {
             self::autoLoader(function ($usings = []) use($assembly) {
-                set_include_path(get_include_path() . PATH_SEPARATOR . implode(PATH_SEPARATOR, array_merge($usings ?? [], $assembly)));
-				spl_autoload_extensions('.php');
+                set_include_path(get_include_path() . PATH_SEPARATOR . implode(PATH_SEPARATOR, array_merge((array)$usings ?? [], (array)$assembly ?? [])));
+                spl_autoload_extensions('.php');
 				spl_autoload_register(function($clsName) {
 					!is_readable($caseSensitive = strtolower(str_replace('\\', DIRECTORY_SEPARATOR, $clsName).'.php')) ?
-					spl_autoload(strtolower(str_replace(__NAMESPACE__.'\\', '', $clsName))) :
-					require_once($caseSensitive);
+                    spl_autoload(strtolower(str_replace(__NAMESPACE__.'\\', '', $clsName))) : require_once($caseSensitive);
 				});
 			});
         }
@@ -28,7 +27,7 @@ namespace Cimply {
         private static function autoLoader($loader, $assembly = []): void {
 			if(!is_callable(self::$loader ?? self::$loader = $loader)) {
 				throw new \Exception('classLoader error.');
-			}
+            }
             (self::$loader)($assembly).($loader)(System\Settings::Assembly);
         }
 

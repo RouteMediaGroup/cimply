@@ -43,8 +43,8 @@ namespace Cimply\Core\Request\Uri {
         public function setBaseUrl(): void {
             $newUri = self::$filePath ?? 'index';
             $hostIP = getHostByName(getHostName());
-            $url  = (isset($_SERVER["HTTPS"]) ? 'https://' : 'http://').$hostIP.'/';
-            $url .= (isset($_SERVER["SERVER_PORT"]) && ($_SERVER["SERVER_PORT"] !== 80)) ? ":" . $_SERVER["SERVER_PORT"] : "";
+            $url  = (isset($_SERVER["HTTPS"]) ? 'https://' : 'http://').$hostIP;
+            $url .= (isset($_SERVER["SERVER_PORT"]) && ($_SERVER["SERVER_PORT"] !== 80)) ? ":" . $_SERVER["SERVER_PORT"] : "/";
             $url .= isset($newUri) ? $newUri : str_replace('//', '/', $_SERVER["REQUEST_URI"]);
             $baseUrl = \pathinfo($url);
 
@@ -58,7 +58,7 @@ namespace Cimply\Core\Request\Uri {
             $urlToArray = explode('/', substr($filePath['dirname'], 1));
             self::$currentFile = $urlToArray[0];
         }
-        function currentFile() {
+        public function currentFile() {
             return self::$currentFile;
         }
         public static function ActionPath($actionPath = null) {

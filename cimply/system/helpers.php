@@ -146,7 +146,7 @@ namespace Cimply\System {
         }
 
         public function __invoke() {
-            call_user_func_array($this->callable, array_merge($this->args, func_get_args()));
+            call_user_func_array($this->callable ?? '__construct', array_merge($this->args ?? [], func_get_args() ?? []));
         }
 
         public static function Invoke($name = null, $class = null, $method = null, $data = array(), $viewModel = null) {
@@ -282,7 +282,7 @@ namespace Cimply\System {
                     break;
                 
                 case "list":
-                    return parent::__invoke('result', 'TableBuilder', 'buildTable', $result)->result;
+                    return self::__invoke('result', 'TableBuilder', 'buildTable', $result)->result;
                     break;
 
                 case "clean":

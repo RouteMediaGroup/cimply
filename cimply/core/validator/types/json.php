@@ -43,12 +43,8 @@ namespace Cimply\Core\Validator\Types
 
             if(isset($this->source[$var]))
             {
-                (strlen(isset($this->source[$var]) ? $this->source[$var] : null) < $min) ?
-                    $this->errors[$var] = $var . ' [+is too short+]'
-                : (strlen(isset($this->source[$var]) ? $this->source[$var] : null) > $max) ?
-                    $this->errors[$var] = $var . ' [+is too long+]'
-                : (is_string($this->source[$var])) ? :
-                    $this->errors[$var] = $var . ' [+is invalid+]';
+                $val = isset($this->source[$var]) ? strlen($this->source[$var]) : 0; 
+                ( ($val < $min) ? $this->errors[$var] = "[+%0% is to short|{$var}+]" : ( ($val > $max) ? $this->errors[$var] = "[+%0% is to long|{$var}+]" : (is_string($this->source[$var])? null : $this->errors[$var] = "[+%0% is an invalid string|{$var}+]") ) );                 
             }
             return $state;
         }

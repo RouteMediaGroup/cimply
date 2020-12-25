@@ -3,7 +3,7 @@ namespace Cimply\Core\Model {
     class EntityBase
     {
         use \Properties, \Cast;
-        public $table, $infoMessage = array(), $saveAble = true, $refresh = false;
+        public $table, $infoMessage = [], $saveAble = true, $refresh = false;
 
         /**
          * Summary of Cast

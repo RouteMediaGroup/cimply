@@ -43,7 +43,7 @@ namespace Cimply\App\Base {
             return (new self($services))->execute();
         }
 
-        private function execute(): void
+        protected function execute(): void
         {
             $systemSettings = Support::Cast($this->services->getService())->getSystemSettings();
             //$crypto = (Support::Cast($this->services->getService())->getScopeSettings('Crypto'));
@@ -57,7 +57,7 @@ namespace Cimply\App\Base {
             $version = View::ParseTplVars('Version');
 
             View::Assign([ 'author' => $author, 'version' => $version, 'date' => date('Y-m-d\TH:i:s\Z'), 'addr' => $_SERVER['HTTP_HOST'] ]);
-            View::Render($outputHtml);
+            View::Show($outputHtml, false, true, 'auto');
         }
     }
 }

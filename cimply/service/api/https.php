@@ -1,18 +1,15 @@
 <?php
 namespace Cimply\Service\Api {
     use \Cimply\Core\View\View;
-    class Http {
+    class Https {
         static function Request(string $serviceAddr, $method = 'POST', $protocol = 'https', $port = null, $username = '', $passwort = '') {
             $protocol = \strtolower($protocol);
-            $method = \strtoupper($method);
             $data = "";
-            $postdata = http_build_query(View::GetVars());
             $opts = [
                 'http' => [
-                    'timeout' => 30,
                     'method'  => $method,
                     'header' => empty($username) ? "Content-type: application/x-www-form-urlencoded" : "Authorization: Basic " . base64_encode("{$username}:{$passwort}"),
-                    'content' => $postdata
+                    'content' => \http_build_query(View::GetVars())
                 ],
                 'ssl' => [
                     'verify_peer' => false,
@@ -20,17 +17,20 @@ namespace Cimply\Service\Api {
                 ]
             ];
             $url = (strpos($serviceAddr, "://") === false ? "{$protocol}://" : "").self::UrlConvert($serviceAddr).($port ? ":{$port}" : "");
-            if(($data = \file_get_contents("{$url}?{$postdata}", false, stream_context_create($opts))) === false) {
+            
+            if(($data = \file_get_contents($url, false, stream_context_create($opts))) === false) {
+                
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($protocol === 'https') ? true : false);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_HEADER, 0);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, View::GetVars());
                 $data = curl_exec($ch);
                 curl_close($ch);
             }
-            return \json_decode($data);
+            $returnValue = (is_array($data)) ? \json_decode($data) : $data;
+
+            return ($returnValue);
         }
         static function Service(string $serviceAddr, $method = 'POST', $protocol = 'https', $port = null) {
             $protocol = \strtolower($protocol);
@@ -38,7 +38,7 @@ namespace Cimply\Service\Api {
                 'http' => [
                     'method'  => $method,
                     'header'  => 'Content-type: application/x-www-form-urlencoded',
-                    'content' => \http_build_query(View::GetVars())
+                    'content' => http_build_query(View::GetVars())
                 ],
                 'ssl' => [
                     'verify_peer' => false,
