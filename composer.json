@@ -22,7 +22,7 @@
     "autoload-dev": {
         "psr-4": {
 	    "Cimply\\Work\\": "Work.php",
-	    "Cimply\\Debug\\": "Debug.php"
+	    "Cimply\\Debug\\": "Debug.php",
             "Cimply\\Cli\\": "Cli.php",
 	    "Cimply\\Console\\": "Console.php"
         }
@@ -36,7 +36,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0.1.7-dev"
+            "dev-master": "3.0.1.8-dev"
         },
 	"branch-version": "3.0"
     }
