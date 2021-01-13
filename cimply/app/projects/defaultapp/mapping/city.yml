@@ -1,0 +1,44 @@
+entities:
+    city:
+        ID:
+            datatype:           3
+            length:             11
+            flags:              49667
+            index:              1
+            autoincrement:      true
+            markup:
+                type:           'hidden'
+                namespace:      formData
+        Name:
+            datatype:           253
+            length:             255
+            autoincrement:      false
+            markup:
+                namespace:      formData
+                attr:
+                    class:      col-lg-12 col-md-12 col-sm-12 col-xs-12 marpad-clear
+                label:
+                    name:       Benutzername
+                    attr:       class="grid_12"
+                class:          form-control border-gradient boxinput ng-pristine ng-untouched ng-valid ng-not-empty
+        CountryCode:
+            datatype:           253
+            length:             255
+            autoincrement:      false
+            markup:
+                type:           password
+                attr:
+                    class:      col-lg-12 col-md-12 col-sm-12 col-xs-12 marpad-clear
+                label:
+                    name:       Passwort* <small>(min. 6 Zeichen)</small>
+                    attr: 
+                        class:  grid_12
+                class:          form-control border-gradient boxinput ng-pristine ng-untouched ng-valid ng-not-empty
+        District:
+            datatype:           253
+            length:             255
+            unique:             false
+        Population:
+            datatype:           253
+            length:             255
+            unique:             false
