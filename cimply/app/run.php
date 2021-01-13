@@ -47,7 +47,7 @@ namespace Cimply\App {
 
         final function register(): ServiceLocator {
             //add instance of routing
-            $rootUrl = !(empty($this->settings->getSettings([], AppSettings::BASEURL))) ? $this->settings->getSettings([], AppSettings::BASEURL) :  '/';
+            $rootUrl = !(empty($this->settings->getSettings([], AppSettings::BASEURL))) ? $this->settings->getSettings([], AppSettings::BASEURL) : null;
             $this->instance->addInstance(new Routing(parent::GetConfig()->loader([$this->projectPath.'routing.yml', 'routing.yml'], $this->routing((new UriManager)->getRoutingPath($rootUrl)))));
             //add instance of request-data
             $this->instance->addInstance(new Request($this->validate));
