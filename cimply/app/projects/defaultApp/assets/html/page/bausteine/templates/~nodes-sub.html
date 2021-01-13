@@ -1,0 +1,24 @@
+<div ui-tree-handle class="tree-node tree-node-content">
+    <span data-id="{{node.BausteinId}}" class="itemTitle">{{node.Title}}</span>
+    <span data-nodrag class="bereich-icons pull-right">
+        <span ng-repeat="bereich in bereiche" ng-class = "bereich.value[$index] ? '' : 'disabled'" ng-click = "bereich.value[$index] = !bereich.value[$index]">
+            <span ng-class="" class="icon icon-{{bereich.Name}}"></span> 
+            <input type="checkbox" ng-value="{{bereich.Wert}}" autocomplete="off" />
+        </span>
+    </span>
+    <span class="pull-right">
+        <a class="pull-left btn btn-xs" data-nodrag ng-click="toggle(this)">
+            <span class="glyphicon darkgray" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"> </span>
+        </a>
+    </span>
+    <span class="itemGroup pull-right">
+
+        <a class="set-icon white" data-nodrag ng-click="ShowInfo(bereich)"><icon class="info"></icon></a>
+        <a class="set-icon white" data-nodrag ng-click="EditBaustein(bereich)"><icon class="edit"></icon></a>
+        <a class="set-icon white" data-nodrag ng-click="RemoveBaustein(this)"><icon class="remove red"></icon></a>
+        <!--<a class="btn btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus green"></span></a>-->
+    </span>
+</div>
+<ol ui-tree-nodes="" ng-model="node.Nodes" ng-class="{hidden: collapsed}" class="sortable ui-sortable mjs-nestedSortable-branch mjs-nestedSortable-expanded">
+    <li ng-repeat="node in node.Nodes" ui-tree-node ng-include="'nodes_sub.html'" ng-show="visible(node)"></li>
+</ol>

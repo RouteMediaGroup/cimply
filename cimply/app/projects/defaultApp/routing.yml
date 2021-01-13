@@ -1,0 +1,5 @@
+#Region: Routings
+index:
+    type:       'html'
+    action:     'Cimply\App\MainCtrl::Init'
+#EndRegion Routings
