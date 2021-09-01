@@ -13,21 +13,23 @@ namespace {
         }
 
         public static function Decrypt($data, $cipher = "", $pepper = "") {
-            $dataDecode = base64_decode($data);
-            if (substr($dataDecode, 0, strlen($pepper)) != $pepper)
-                return false;
-            
-            $ciphertext = gzuncompress(substr($dataDecode, strlen($pepper)));
-            $c = base64_decode($ciphertext);
-            $ivlen = openssl_cipher_iv_length($cipher);
-            $iv = substr($c, 0, $ivlen);
-            $hmac = substr($c, $ivlen, $sha2len=32);
-            $ciphertext_raw = substr($c, $ivlen+$sha2len);
-            $original_plaintext = openssl_decrypt($ciphertext_raw, $cipher, $pepper, $options=OPENSSL_RAW_DATA, $iv);
-            $calcmac = hash_hmac('sha256', $ciphertext_raw, $pepper, $as_binary = true);
-            if (hash_equals($hmac, $calcmac))
-            {
-                return unserialize($original_plaintext);
+            if($data !== '=') {
+                $dataDecode = base64_decode($data);
+                if (substr($dataDecode, 0, strlen($pepper)) != $pepper)
+                    return false;
+                
+                $ciphertext = gzuncompress(substr($dataDecode, strlen($pepper)));
+                $c = base64_decode($ciphertext);
+                $ivlen = openssl_cipher_iv_length($cipher);
+                $iv = substr($c, 0, $ivlen);
+                $hmac = substr($c, $ivlen, $sha2len=32);
+                $ciphertext_raw = substr($c, $ivlen+$sha2len);
+                $original_plaintext = openssl_decrypt($ciphertext_raw, $cipher, $pepper, $options=OPENSSL_RAW_DATA, $iv);
+                $calcmac = hash_hmac('sha256', $ciphertext_raw, $pepper, $as_binary = true);
+                if (hash_equals($hmac, $calcmac))
+                {
+                    return unserialize($original_plaintext);
+                }
             }
             return '';
         }
