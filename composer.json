@@ -21,12 +21,14 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Cimply\\Cli\\": "src/Cli.php",
-	        "Cimply\\Console\\": "src/Console.php"
+	    "Cimply\\Work\\": "Work.php",
+	    "Cimply\\Debug\\": "Debug.php",
+            "Cimply\\Cli\\": "Cli.php",
+	    "Cimply\\Console\\": "Console.php"
         }
     },
     "require": {
-        "php": ">=7.2 || 8.0.0"
+        "php": ">=7.2 || >=8.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5.20 || ^8.5.2 || ^9.0"
@@ -34,7 +36,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0.1.4-dev"
+            "dev-master": "3.0.1.8-dev"
         },
 	"branch-version": "3.0"
     }
