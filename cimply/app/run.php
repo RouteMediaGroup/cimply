@@ -17,8 +17,10 @@ namespace Cimply\App {
         function __construct(...$args) {
             parent::__construct();
             if(!(empty($args))) {
-                (session_id() === null) ? session_id($args[0]) : ( (session_status() != 1) ? session_start() : true );
-                $this->instance = ServiceLocator::Cast(\Secure::Add(((object)$args[2])->extends));
+                (session_id() === null) ? session_id($args[0] ?? 'sessionid_'.microtime()) : ( (session_status() != 1) ? session_start() : true );
+                $this->instance = ServiceLocator::Cast(\Secure::Add(
+                    (isset($args[2])) ? ((object)$args[2])->extends ?? null : null
+                ));
                 $this->projectName = $args[0];
                 $this->autoloader = $args[1];
                 $this->projectPath = (str_replace('%project%', $args[0], Settings::ProjectPath));
