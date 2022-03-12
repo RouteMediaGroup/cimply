@@ -48,7 +48,8 @@ namespace Cimply\Core\View {
         }
 
         static function WordTranslation($value, $langCode = 'de_DE') {
-            $checkString = self::GetStaticProperty('Translations')[$value] ?? null;
+            $translation = (array)self::GetStaticProperty('Translations');
+            $checkString = $translation[$value] ?? $translation;
             return $checkString[$langCode] ?? $value;
         }
 

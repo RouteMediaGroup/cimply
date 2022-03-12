@@ -52,13 +52,13 @@ namespace {
             return implode($delimiter, $result);
         }
         
-        static function MergeArrays($arr1 = null, $arr2 = null) {
+        static function MergeArrays($arr1 = [], $arr2 = []) {
             if(isset($arr2)) {
                 foreach($arr2 as $key => $value) {
-                    if(array_key_exists($key, $arr1) && is_array($value)) {
-                        $arr1[$key] = self::MergeArrays($arr1[$key], $arr2[$key]);
+                    if(array_key_exists($key, $arr1 ?? []) && is_array($value)) {
+                        $arr1[$key] = self::MergeArrays($arr1[$key] ?? '', $arr2[$key] ?? '');
                     } else {
-                        $arr1[$key] = $value;
+                        $arr1[$key] = $value ?? '';
                     }
                 }
             }

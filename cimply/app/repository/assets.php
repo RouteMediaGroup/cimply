@@ -26,7 +26,7 @@ namespace Cimply\App\Repository
          * @param mixed $selfObject
          * @return mixed
          */
-        final static function Cast($mainObject, $selfObject = self::class): self {
+        final static function Cast($mainObject, $selfObject = self::class): ?self {
             return self::Cull($mainObject, $selfObject);
         }
 

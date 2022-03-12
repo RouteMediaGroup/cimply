@@ -21,9 +21,9 @@ namespace Cimply\App {
                 $this->instance = ServiceLocator::Cast(\Secure::Add(((object)$args[2])->extends));
                 $this->projectName = $args[0];
                 $this->autoloader = $args[1];
-                $this->projectPath = (str_replace('%project%', $args[0], Settings::ProjectPath));
+                $this->projectPath = (str_replace('%project%', $args[0], (isset($args[3]) ? $args[3].DIRECTORY_SEPARATOR : Settings::ProjectPath)));
                 //add instance of project settings
-                $conf = parent::GetConfig()->loader([$this->projectPath.'config.yml', 'config.yml'], self::$conf) ?? self::$conf;
+                $conf = parent::GetConfig()->loader([(APPPATH ?? '.').DIRECTORY_SEPARATOR.'config.yml', $this->projectPath.'config.yml'], self::$conf) ?? self::$conf;
                 $this->settings = $this->instance->addInstance(new Support(
                     array_map(
                         function($values) {
@@ -67,7 +67,7 @@ namespace Cimply\App {
         final function execute(): Run {
             ($this->autoloader)($this->settings->getAssembly());
             try {
-                $app = \ucfirst($this->settings->getSettings([], AppSettings::PROJECTNAMESPACE));
+                $app = ($this->settings->getSettings([], AppSettings::PROJECTNAMESPACE));
                 if(class_exists($app) !== true) {
                     $this->error = true;
                     throw new \Exception("App can not be run. Because \"{$app}\" not be found.");

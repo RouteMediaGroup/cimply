@@ -22,7 +22,7 @@ namespace Cimply\Core\View {
         private static $vars = [], $ttl = 1, $view = "";
         protected $scope;
 
-        public static $mimeType = 'x-conference/x-cooltalk', $externalFile = true;
+        public static $mimeType = '', $externalFile = true;
 
         function __construct(Scope $scope = null)
         {
