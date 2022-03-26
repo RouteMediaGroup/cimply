@@ -15,12 +15,12 @@ namespace Cimply\App {
         public $isDebug = false, $error = false, $callable, $args = [];
         protected $instance = null, $autoloader = null, $projectName = null, $projectPath = null, $settings = null;
         function __construct(...$args) {
-            
             parent::__construct();
             if(!(empty($args))) {
                 (session_id() === null) ? session_id($args[0] ?? 'sessionid_'.microtime()) : ( (session_status() != 1) ? session_start() : true );
+                
                 $this->instance = ServiceLocator::Cast(\Secure::Add(
-                    (isset($args[2]) && (\property_exists(((object)$args[2]), 'extends'))) ? ((object)($args[2])->extends ?? []) : []
+                    (isset($args[2]['extends'])) ? (((object)($args[2]))->extends) : (object)['extends'=>null]
                 ));
                 $this->projectName = $args[0];
                 $this->autoloader = $args[1];
@@ -39,7 +39,6 @@ namespace Cimply\App {
                         }, $conf
                     )
                 ));
-              
                 $this->isDebug = $this->settings->getSettings([], RootSettings::DEVMODE);
             }
         }
@@ -57,7 +56,7 @@ namespace Cimply\App {
         final function register(): ServiceLocator {
             //add instance of routing
             $rootUrl = !(empty($this->settings->getSettings([], AppSettings::BASEURL))) ? $this->settings->getSettings([], AppSettings::BASEURL) : null;
-            $this->instance->addInstance(new Routing(parent::GetConfig()->loader([$this->projectPath.'routing.yml', 'routing.yml'], $this->routing((new UriManager(null,null,$rootUrl))->getRoutingPath()))));
+            $this->instance->addInstance(new Routing(parent::GetConfig()->loader([$this->projectPath.'routing.yml', 'routing.yml'], $this->routing((new UriManager)->getRoutingPath($rootUrl)))));
             //add instance of request-data
             $this->instance->addInstance(new Request($this->validate));
             //add instance of globale translations
