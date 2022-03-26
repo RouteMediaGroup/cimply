@@ -15,17 +15,23 @@ namespace Cimply\App {
         public $isDebug = false, $error = false, $callable, $args = [];
         protected $instance = null, $autoloader = null, $projectName = null, $projectPath = null, $settings = null;
         function __construct(...$args) {
+            
             parent::__construct();
             if(!(empty($args))) {
                 (session_id() === null) ? session_id($args[0] ?? 'sessionid_'.microtime()) : ( (session_status() != 1) ? session_start() : true );
                 $this->instance = ServiceLocator::Cast(\Secure::Add(
-                    (isset($args[2])) ? ((object)$args[2])->extends ?? null : null
+                    (isset($args[2]) && (\property_exists(((object)$args[2]), 'extends'))) ? ((object)($args[2])->extends ?? []) : []
                 ));
                 $this->projectName = $args[0];
                 $this->autoloader = $args[1];
                 $this->projectPath = (str_replace('%project%', $args[0], (isset($args[3]) ? $args[3].DIRECTORY_SEPARATOR : Settings::ProjectPath)));
+                
                 //add instance of project settings
-                $conf = parent::GetConfig()->loader([(APPPATH ?? '.').DIRECTORY_SEPARATOR.'config.yml', $this->projectPath.'config.yml'], self::$conf) ?? self::$conf;
+                $conf = parent::GetConfig()->loader(
+                    [is_array((end($args)) ? '.'.DIRECTORY_SEPARATOR.'config.yml' : end($args)),
+                    $this->projectPath.'config.yml'],
+                    self::$conf) ?? self::$conf;
+                
                 $this->settings = $this->instance->addInstance(new Support(
                     array_map(
                         function($values) {
@@ -33,6 +39,7 @@ namespace Cimply\App {
                         }, $conf
                     )
                 ));
+              
                 $this->isDebug = $this->settings->getSettings([], RootSettings::DEVMODE);
             }
         }
@@ -50,7 +57,7 @@ namespace Cimply\App {
         final function register(): ServiceLocator {
             //add instance of routing
             $rootUrl = !(empty($this->settings->getSettings([], AppSettings::BASEURL))) ? $this->settings->getSettings([], AppSettings::BASEURL) : null;
-            $this->instance->addInstance(new Routing(parent::GetConfig()->loader([$this->projectPath.'routing.yml', 'routing.yml'], $this->routing((new UriManager)->getRoutingPath($rootUrl)))));
+            $this->instance->addInstance(new Routing(parent::GetConfig()->loader([$this->projectPath.'routing.yml', 'routing.yml'], $this->routing((new UriManager(null,null,$rootUrl))->getRoutingPath()))));
             //add instance of request-data
             $this->instance->addInstance(new Request($this->validate));
             //add instance of globale translations

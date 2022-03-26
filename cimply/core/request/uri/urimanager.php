@@ -3,18 +3,27 @@ namespace Cimply\Core\Request\Uri {
     use \Cimply\Core\{Core};
     class UriManager {
         private static $actionPath, $baseUrl;
-        protected static $filePath, $fileName, $fileBasename, $fileType, $fileNameUrl, $currentFile;
+        protected static $filePath, $fileName, $fileBasename, $fileType, $fileNameUrl, $currentFile, $basePath = '/';
 
-        public function __construct($FilePath = null, $defaultIndex = 'index')
+        public function __construct($executeFile = null, $defaultIndex = 'index', $basePath = null)
         {
-            $value = isset($FilePath) ? '/'.$FilePath : $_SERVER['REQUEST_URI'] ?? self::$actionPath;
+            if(isset($basePath)) {
+                $this->basePath = $basePath;
+                $expl = \explode($basePath, $_SERVER['REQUEST_URI']);
+                $explFirst = $expl[0].$basePath;
+                $explSecond = str_replace('/','_',end($expl));
+                $_SERVER['REQUEST_URI'] = $explFirst.$explSecond;
+            }
+            $value = isset($executeFile) ? '/'.$executeFile : $_SERVER['REQUEST_URI'];
             $explodePath = explode('?', $value);
             isset($explodePath[1]) ? $value = $explodePath[0] : null;
             $value !== '/' ? : $value.= $defaultIndex;
+        
             self::$filePath = $value;
             $this->setCurrentFile();
             $this->setBaseUrl();
-        }
+        }        
+
         public final static function Cast($mainObject, $selfObject = self::class): self {
             return Core::Cast($mainObject, $selfObject);
         }
@@ -27,6 +36,16 @@ namespace Cimply\Core\Request\Uri {
         public function getFilePath(): ?string {
             return substr(self::$filePath, 1);
         }
+        public function getRoutingPath(): ?string {
+            $subPath = \explode($this->basePath, (string)$this->getFilePath());
+            $actionPath = \explode('/', end($subPath));
+            self::ActionPath(\implode('_', $actionPath));
+            (bool)$this->basePath === true ? : \array_splice($actionPath, 0, 1);
+            self::$filePath = \implode('/', $actionPath);
+            return \str_replace('/','_', self::$filePath);
+        }
+
+        /*
         public function getRoutingPath($setBaseUrl = null): ?string {
             $actionPath = explode('/', $this->getFilePath());
             self::ActionPath(implode('_', $actionPath));
@@ -34,6 +53,7 @@ namespace Cimply\Core\Request\Uri {
             self::$filePath = implode('/', $actionPath);
             return str_replace('/','_', self::$filePath);
         }
+        */
         public function getFileName(): ?string {
             return self::$fileName;
         }
@@ -47,7 +67,6 @@ namespace Cimply\Core\Request\Uri {
             $url .= (isset($_SERVER["SERVER_PORT"]) && ($_SERVER["SERVER_PORT"] !== 80)) ? ":" . $_SERVER["SERVER_PORT"] : "/";
             $url .= isset($newUri) ? $newUri : str_replace('//', '/', $_SERVER["REQUEST_URI"]);
             $baseUrl = \pathinfo($url);
-
             self::$fileNameUrl = $baseUrl['dirname'] ?? null;
             self::$fileBasename = $baseUrl['basename'] ?? null;
             self::$fileName = $baseUrl['filename'] ?? null;
