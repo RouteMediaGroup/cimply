@@ -20,7 +20,7 @@ namespace Cimply\App {
             if(!(empty($args))) {
                 (session_id() === null) ? session_id($args[0] ?? 'sessionid_'.microtime()) : ( (session_status() != 1) ? session_start() : true );
                 $this->instance = ServiceLocator::Cast(\Secure::Add(
-                    (isset($args[2]) && (\property_exists(((object)$args[2]), 'extends'))) ? ((object)($args[2])->extends ?? []) : []
+                    (isset($args[2]['extends'])) ? (((object)($args[2]))->extends) : (object)['extends'=>null]
                 ));
                 $this->projectName = $args[0];
                 $this->autoloader = $args[1];
