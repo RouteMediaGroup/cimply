@@ -13,12 +13,14 @@ namespace
                 : self::AddFiles($files);
             }            
         }
-        static function AddFiles($secureDirectory): void {
-            $secureFiles  = \array_diff(\scandir($secureDirectory), ['..', '.']);
-            foreach($secureFiles as $file) {
-                if(!(strpos($file,'.map'))) {
-                    $filePath = $secureDirectory.DIRECTORY_SEPARATOR.$file;
-                    self::Add([$filePath]);
+        static function AddFiles($secureDirectory = ''): void {
+            if(!(empty($secureDirectory))) {
+                $secureFiles  = \array_diff(\scandir($secureDirectory), ['..', '.']);
+                foreach($secureFiles as $file) {
+                    if(!(strpos($file,'.map'))) {
+                        $filePath = $secureDirectory.DIRECTORY_SEPARATOR.$file;
+                        self::Add([$filePath]);
+                    }
                 }
             }
         }
