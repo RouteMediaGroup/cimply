@@ -26,7 +26,7 @@ namespace Cimply\Core\Request {
             } else {
                 $this->validate = $validations;
             }
-            !isset($_SERVER['REQUEST_URI']) ? : $this->service(); 
+            !(isset($_SERVER['REQUEST_URI'])) ? : $this->service(); 
         }
 
         private function service() {

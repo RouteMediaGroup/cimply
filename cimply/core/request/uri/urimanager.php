@@ -3,18 +3,22 @@ namespace Cimply\Core\Request\Uri {
     use \Cimply\Core\{Core};
     class UriManager {
         private static $actionPath, $baseUrl;
-        protected static $filePath, $fileName, $fileBasename, $fileType, $fileNameUrl, $currentFile, $basePath = '/';
+        protected static $filePath, $fileName, $fileBasename, $fileType, $fileNameUrl, $currentFile;
+        private $basePath = '/';
 
         public function __construct($executeFile = null, $defaultIndex = 'index', $basePath = null)
         {
-            if(isset($basePath)) {
-                $this->basePath = $basePath;
-                $expl = \explode($basePath, $_SERVER['REQUEST_URI']);
-                $explFirst = $expl[0].$basePath;
-                $explSecond = str_replace('/','_',end($expl));
-                $_SERVER['REQUEST_URI'] = $explFirst.$explSecond;
+            if(isset($_SERVER['REQUEST_URI'])) {
+                if(isset($basePath)) {
+                    $this->basePath = $basePath;
+                    $expl = \explode($basePath, $_SERVER['REQUEST_URI']);
+                    $explFirst = $expl[0].$basePath;
+                    $explSecond = str_replace('/','_',end($expl));
+                    $_SERVER['REQUEST_URI'] = $explFirst.$explSecond;
+                }    
             }
-            $value = isset($executeFile) ? '/'.$executeFile : $_SERVER['REQUEST_URI'];
+            
+            $value = isset($executeFile) ? '/'.$executeFile : ($_SERVER['REQUEST_URI'] ?? self::$actionPath ?? $defaultIndex);
             $explodePath = explode('?', $value);
             isset($explodePath[1]) ? $value = $explodePath[0] : null;
             $value !== '/' ? : $value.= $defaultIndex;
@@ -74,7 +78,7 @@ namespace Cimply\Core\Request\Uri {
         }
         private function setCurrentFile():void {
             $filePath = \pathinfo(self::$filePath);
-            $urlToArray = explode('/', substr($filePath['dirname'], 1));
+            $urlToArray = explode('/', substr(($filePath['dirname'] ?? '/'), 1));
             self::$currentFile = $urlToArray[0];
         }
         public function currentFile() {
