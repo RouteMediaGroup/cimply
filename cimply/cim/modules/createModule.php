@@ -46,7 +46,7 @@ namespace Cim\Modules {
         /**
          *
          * @Author Michael Eckebrecht
-         * @Step1 Enter name of modul (*Hallo)
+         * @Step1 Enter name of modul (*)
          * @Step2 Declare strict types? 1: yes | 2: no default(no)
          * @Step3 Enter name of base class (*)
          * @Step4 Enter name of extended class (skip with enter)

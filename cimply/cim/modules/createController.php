@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * Copyright (c) 2012 - 2018 Cimply.Work
+ * Copyright (c) 2012 - 2022 Cimply.Work
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@
  * @package    Console
  * @copyright  Copyright (c) 2012 - 2018 Cimply.Work (http://www.cimply.work/v3)
  * @license    http://www.gnu.org/licenses/lgpl.txt  LGPL
- * @version    3.0.0, 2018-01-21
+ * @version    3.0.0, 2022-03-28
  */
 
 /**
@@ -170,7 +170,7 @@ namespace Cim\Modules {
                     } else {
                         ctype_digit(substr($selected, 0, 1)) ? self::SendErrorMsg("the first char must be a letter") : null;
                     }
-                    (strlen($selected) <= 3 && !empty($selected)) ? self::SendErrorMsg("enter min. 3 characters") : !empty($selected) ? $usings = \explode('#', $selected) : null;
+                    ((strlen($selected) <= 3 && !empty($selected)) ? self::SendErrorMsg("enter min. 3 characters") : !empty($selected)) ? $usings = \explode('#', $selected) : null;
                     self::Execute('usings', $usings);
                     break;
                 case '15':
@@ -180,7 +180,7 @@ namespace Cim\Modules {
                     } else {
                         ctype_digit(substr($selected, 0, 1)) ? self::SendErrorMsg("the first char must be a letter") : null;
                     }
-                    (strlen($selected) <= 2 && !empty($selected)) ? self::SendErrorMsg("enter min. 3 characters") : !empty($selected) ? $annotations = \explode('#', $selected) : null;
+                    ((strlen($selected) <= 2 && !empty($selected)) ? self::SendErrorMsg("enter min. 3 characters") : !empty($selected)) ? $annotations = \explode('#', $selected) : null;
                     self::Execute('annotations', $annotations);
                     break;
             	default:
