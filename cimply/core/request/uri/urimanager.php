@@ -48,16 +48,6 @@ namespace Cimply\Core\Request\Uri {
             self::$filePath = \implode('/', $actionPath);
             return \str_replace('/','_', self::$filePath);
         }
-
-        /*
-        public function getRoutingPath($setBaseUrl = null): ?string {
-            $actionPath = explode('/', $this->getFilePath());
-            self::ActionPath(implode('_', $actionPath));
-            (bool)$setBaseUrl === true ? : \array_splice($actionPath, 0, 1);
-            self::$filePath = implode('/', $actionPath);
-            return str_replace('/','_', self::$filePath);
-        }
-        */
         public function getFileName(): ?string {
             return self::$fileName;
         }
