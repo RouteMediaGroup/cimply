@@ -28,8 +28,11 @@ namespace Cimply\App {
                 
                 //add instance of project settings
                 $conf = parent::GetConfig()->loader(
-                    [is_array((end($args)) ? '.'.DIRECTORY_SEPARATOR.'config.yml' : end($args)),
-                    $this->projectPath.'config.yml'],
+                    [
+                        is_array(end($args) ? '..'.DIRECTORY_SEPARATOR.'config.yml' : end($args)),
+                        $this->projectPath.'config.yml',
+                        '..'.DIRECTORY_SEPARATOR.'config.yml'
+                    ],
                     self::$conf) ?? self::$conf;
                 
                 $this->settings = $this->instance->addInstance(new Support(
