@@ -6,8 +6,8 @@ namespace Cimply\Interfaces\Support\Enum
      *
      * DataTypes description.
      *
-     * @version 1.0
-     * @author MikeCorner
+     * @version 1.1
+     * @author Michael Eckebrecht
      */
     abstract class AppSettings extends \Enum
     {
@@ -23,8 +23,10 @@ namespace Cimply\Interfaces\Support\Enum
         const CLIENTFILESALLOW      = "App:ClientFiles";
         const DATABASE              = "App:Database";
         const DEFAULTS              = "App:Default";
-        const COMMONDIR             = "App:CommonDir";
+        const MODULE             	= "App:Module";
+		const COMMONDIR             = "App:CommonDir";
         const CACHEDIR              = "App:CacheDir";
+		const TMPDIR              	= "App:TMPDIR";
         const NULL                  = NULL;
     }
 }
