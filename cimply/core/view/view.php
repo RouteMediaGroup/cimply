@@ -53,7 +53,7 @@ namespace Cimply\Core\View {
                 $baseFile = self::GetStaticProperty(AppSettings::ASSETS) . DIRECTORY_SEPARATOR . $extension . DIRECTORY_SEPARATOR . $basename;
 				$result = \is_file($baseFile) && (self::GetStaticProperty(AppSettings::CLIENTFILESALLOW) == true) 
 				? $baseFile
-				: (is_string(self::GetStaticProperty(AppSettings::PROJECTPATH)) ? self::GetStaticProperty(AppSettings::PROJECTPATH). DIRECTORY_SEPARATOR . $baseFile : null);
+				: ((\is_string(self::GetStaticProperty(AppSettings::PROJECTPATH))) && \is_file(self::GetStaticProperty(AppSettings::PROJECTPATH). DIRECTORY_SEPARATOR . $baseFile) ? self::GetStaticProperty(AppSettings::PROJECTPATH). DIRECTORY_SEPARATOR . $baseFile : die(self::GetStaticProperty(AppSettings::MODULE). DIRECTORY_SEPARATOR . $baseFile));
 				self::$externalFile = false;
             }
             return \array_merge(['filePath' => $result], $path);
