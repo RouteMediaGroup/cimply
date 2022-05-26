@@ -17,7 +17,7 @@ namespace
             if(!(empty($secureDirectory))) {
                 $secureFiles  = \array_diff(\scandir($secureDirectory), ['..', '.']);
                 foreach($secureFiles as $file) {
-                    if(!(strpos($file,'.map'))) {
+                    if( (strpos($file,'.php') || (!(strpos($file,'.')))) ) {
                         $filePath = $secureDirectory.DIRECTORY_SEPARATOR.$file;
                         self::Add([$filePath]);
                     }
