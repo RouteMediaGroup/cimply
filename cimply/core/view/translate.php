@@ -1,17 +1,11 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace Cimply\Core\View {
 
     /**
-     * Description of CIM
+     * Description of Cimply.Work
      *
-     * @author MikeCorner
+     * @author Michael Eckebrecht
      */
     use \Cimply\System\Helpers as Helper;
     class Translate
