@@ -12,9 +12,9 @@ namespace Cimply\Core\Request\Uri {
                 if(isset($basePath)) {
                     $this->basePath = $basePath;
                     $expl = \explode($basePath, $_SERVER['REQUEST_URI']);
-                    $explFirst = $expl[0].$basePath;
+                    $explFirst = ($basePath !== true) ? $expl[0].$basePath : $expl[0];
                     $explSecond = str_replace('/','_',end($expl));
-                    $_SERVER['REQUEST_URI'] = $explFirst.$explSecond;
+                    $_SERVER['REQUEST_URI'] = ($explSecond[0] !== '_') ? $explFirst.$explSecond : '/'.substr($explSecond,1);
                 }    
             }
             
