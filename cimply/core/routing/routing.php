@@ -2,12 +2,12 @@
 namespace Cimply\Core\Routing
 {
 	/**
-	 * Router short summary.
+	 * Cimply.Work
 	 *
 	 * Router description.
 	 *
 	 * @version 1.0.1
-	 * @author MikeCorner
+	 * @author Michael Eckebrecht
 	 */
     use \Cimply\System\System;
     use \Cimply\Core\{Core, View\View, Request\Uri\UriManager};
