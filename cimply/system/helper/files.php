@@ -20,7 +20,7 @@ namespace
                 $context = stream_context_create($opts);
                 $currentFile = \file_get_contents($filename, $path, $context, $param1) ?? null;
             }
-            return $currentFile ?? null;
+            return !(empty($currentFile)) ? $currentFile : null;
         }
         static function PutFileContent($filename, $data = "", $options = null, $method = 'POST', $deep = 0): void
         {
@@ -75,14 +75,13 @@ namespace
         static function FileForceContents($filename = null, $data, $flags = 0):bool {
             return (bool)file_put_contents(str_replace('\\',DIRECTORY_SEPARATOR, $filename), $data, $flags) ?? false;
         }
-
-        static function CacheFile($filePath, $fileName) {
+        static function CacheFile($filePath, $cacheFile) {
             \ob_start();
-            require_once($filePath);
+            require($filePath);
             $fileData = ob_get_contents();
             \ob_end_clean();
-            self::FileForceContents($fileName, $fileData, 0);
-            !(isset($fileData)) ? null : self::FileForceContents($fileName, $fileData, 0);
+            self::FileForceContents($cacheFile, $fileData, 0);
+            !(isset($fileData)) ? null : self::FileForceContents($cacheFile, $fileData, 0);
             return $fileData;
         }
 
