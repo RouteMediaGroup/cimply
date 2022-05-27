@@ -6,16 +6,16 @@ namespace Cimply {
         
         static $loader;
         function __construct($assembly = []) {
-		self::autoLoader(function ($usings = []) use($assembly) {
-			set_include_path(get_include_path() . PATH_SEPARATOR . implode(PATH_SEPARATOR, array_merge((array)$usings ?? [], (array)$assembly ?? [])));
-			spl_autoload_extensions('.php');
-			spl_autoload_register(function($clsName) {
-				$caseSensitiveFile =  strtolower(str_replace('\\', DIRECTORY_SEPARATOR, $clsName).'.php');
-				!is_readable(
-					$filename =  \is_file('..'.DIRECTORY_SEPARATOR.$caseSensitiveFile) ? '..'.DIRECTORY_SEPARATOR.$caseSensitiveFile : $caseSensitiveFile
-				) ? spl_autoload(strtolower(str_replace(__NAMESPACE__.'\\', '', $clsName))) : require_once($filename);    
-		        });
-		}, $assembly);
+            self::autoLoader(function ($usings = []) use($assembly) {
+                set_include_path(get_include_path() . PATH_SEPARATOR . implode(PATH_SEPARATOR, array_merge((array)$usings ?? [], (array)$assembly ?? [])));
+                spl_autoload_extensions('.php');
+                spl_autoload_register(function($clsName) {
+                    $caseSensitiveFile = strtolower(str_replace('\\', DIRECTORY_SEPARATOR, $clsName).'.php');
+                    !is_readable(
+                        $filename =  \is_file('..'.DIRECTORY_SEPARATOR.$caseSensitiveFile) ? '..'.DIRECTORY_SEPARATOR.$caseSensitiveFile : $caseSensitiveFile
+                    ) ? spl_autoload(strtolower(str_replace(__NAMESPACE__.'\\', '', $clsName))) : require_once($filename);    
+                    });
+            }, $assembly);
         }
         function app($projectName = null, $projectPath = null): self {
             if(!($projectName)) {

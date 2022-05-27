@@ -25,15 +25,19 @@ namespace Cimply\App {
                 $this->projectName = $args[0];
                 $this->autoloader = $args[1];
                 $this->projectPath = (str_replace('%project%', $args[0], (isset($args[3]) ? $args[3].DIRECTORY_SEPARATOR : Settings::ProjectPath)));
-                
+                //die(var_dump($this->projectPath));
                 //add instance of project settings
+                //die(var_dump(is_file('.'.DIRECTORY_SEPARATOR.'config.yml')));
                 $conf = parent::GetConfig()->loader(
                     [
                         is_array(end($args) ? '..'.DIRECTORY_SEPARATOR.'config.yml' : end($args)),
                         $this->projectPath.'config.yml',
-                        '..'.DIRECTORY_SEPARATOR.'config.yml'
+                        '.'.DIRECTORY_SEPARATOR.'config.yml'
                     ],
                     self::$conf) ?? self::$conf;
+                $zdzu = [is_array(end($args) ? '.'.DIRECTORY_SEPARATOR.'config.yml' : end($args)),
+                $this->projectPath.'config.yml',
+                '.'.DIRECTORY_SEPARATOR.'config.yml'];
                 
                 $this->settings = $this->instance->addInstance(new Support(
                     array_map(

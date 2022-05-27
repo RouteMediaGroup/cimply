@@ -39,6 +39,24 @@ namespace Cimply\Core\View {
             self::$staticProperties = $this;
         }
 
+        /*static function GetTemplateArgs($tpl = null) : ? array { 
+            $result = null;
+            $path = [];
+            if ($modul = self::GetModules($tpl)) {
+                foreach ($modul as $key => $value) {
+                    $path = \is_string($key) ? ['file' => $key, 'attr' => $value] : ['file' => $value];
+                }
+                $fileInfo = new UriManager($path['file']);
+                $extension = $fileInfo->getFileType();
+                $basename = \str_replace('_', DIRECTORY_SEPARATOR, $fileInfo->getFileBasename());
+                $baseFile = self::GetStaticProperty(AppSettings::ASSETS) . DIRECTORY_SEPARATOR . $extension . DIRECTORY_SEPARATOR . $basename;
+                $result = \is_file($baseFile) && (self::GetStaticProperty(AppSettings::CLIENTFILESALLOW) == true)
+                ? $baseFile
+                : ((\is_string(self::GetStaticProperty(AppSettings::PROJECTPATH))) && \is_file(self::GetStaticProperty(AppSettings::PROJECTPATH). DIRECTORY_SEPARATOR . $baseFile) ? self::GetStaticProperty(AppSettings::PROJECTPATH). DIRECTORY_SEPARATOR . $baseFile : self::GetStaticProperty(AppSettings::MODULE). DIRECTORY_SEPARATOR . $baseFile); self::$externalFile = false; 
+            }
+            return \array_merge(['filePath' => $result], $path);
+        }*/
+
         static function GetTemplateArgs($tpl = null) : ? array
         {
             $result = null;

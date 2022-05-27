@@ -31,6 +31,7 @@ App:
     commonDir:		        "common"
     cacheDir:               "cache"
     debugMode:              true
+    clientFiles:            true
 
 System:
     useTemplateFor:         [html,css,js,htc]
