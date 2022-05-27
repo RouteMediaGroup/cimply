@@ -8,6 +8,18 @@ namespace Cimply\Core\Request\Uri {
 
         public function __construct($executeFile = null, $defaultIndex = 'index', $basePath = null)
         {
+            /*
+            if(isset($_SERVER['REQUEST_URI'])) {
+                if(isset($basePath)) {
+                    $this->basePath = $basePath;
+                    $expl = \explode($basePath, $_SERVER['REQUEST_URI']);
+                    $explFirst = $expl[0].$basePath;
+                    $explSecond = str_replace('/','_',end($expl));
+                    $_SERVER['REQUEST_URI'] = $explFirst.$explSecond;
+                    die(\var_dump($_SERVER['REQUEST_URI']));
+                }    
+            }
+            */
             if(isset($_SERVER['REQUEST_URI'])) {
                 if(isset($basePath)) {
                     $this->basePath = $basePath;
