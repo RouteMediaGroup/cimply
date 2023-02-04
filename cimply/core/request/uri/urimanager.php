@@ -13,19 +13,24 @@ namespace Cimply\Core\Request\Uri {
                 if(isset($basePath)) {
                     $this->basePath = $basePath;
                     $expl = \explode($basePath, $_SERVER['REQUEST_URI']);
-                    $explFirst = $expl[0].$basePath;
+                    $explFirst = ($basePath !== true) ? $expl[0].$basePath : $expl[0];
                     $explSecond = str_replace('/','_',end($expl));
-                    $_SERVER['REQUEST_URI'] = $explFirst.$explSecond;
-                    die(\var_dump($_SERVER['REQUEST_URI']));
+                    $_SERVER['REQUEST_URI'] = ($explSecond[0] !== '_') ? $explFirst.$explSecond : '/'.substr($explSecond,1);
                 }    
             }
             */
+            
             if(isset($_SERVER['REQUEST_URI'])) {
                 if(isset($basePath)) {
-                    $this->basePath = $basePath;
-                    $expl = \explode($basePath, $_SERVER['REQUEST_URI']);
-                    $explFirst = ($basePath !== true) ? $expl[0].$basePath : $expl[0];
-                    $explSecond = str_replace('/','_',end($expl));
+                    if($basePath !== true) {
+                        $this->basePath = $basePath;
+                        $expl = \explode($basePath, $_SERVER['REQUEST_URI']);
+                        $explFirst = $expl[0].$basePath;
+                        $explSecond = str_replace('/','_',end($expl));
+                    } else {
+                        $explFirst = $_SERVER['REQUEST_URI'];
+                        $explSecond = str_replace('/','_',$explFirst);
+                    }
                     $_SERVER['REQUEST_URI'] = ($explSecond[0] !== '_') ? $explFirst.$explSecond : '/'.substr($explSecond,1);
                 }    
             }
