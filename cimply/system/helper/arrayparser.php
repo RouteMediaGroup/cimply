@@ -1,4 +1,13 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
+
 namespace { 
     abstract class ArrayParser {      
         
@@ -84,7 +93,7 @@ namespace {
                     $result[$key] = isset($depth) ? $multiArray[$depth]  : $multiArray[$key];
                 }
             }
-            return isset($toObject) ? (object)$result : $result;
+            return $toObject === true ? (object)$result : $result;
         }
         
         static function GetArray($array = array(), $filter = null, $needle = null) {

@@ -1,4 +1,13 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
+
 namespace Cimply\Basics\ServiceLocator
 {
 	class ServiceLocator
@@ -8,12 +17,12 @@ namespace Cimply\Basics\ServiceLocator
         /**
          * @var array
          */
-        private $services = [];
+        private array $services = [];
 
         /**
          * @var array
          */
-        private $instantiated = [];
+        private array $instantiated = [];
 
         /**
          * Summary of Cast
@@ -21,7 +30,7 @@ namespace Cimply\Basics\ServiceLocator
          * @param mixed $selfObject
          * @return mixed
          */
-        final static function Cast($mainObject, $selfObject = self::class): self {
+        final public static function Cast($mainObject, $selfObject = self::class): self {
             return self::Cull($mainObject, $selfObject);
         }
 
@@ -33,7 +42,7 @@ namespace Cimply\Basics\ServiceLocator
          */
         public function addInstance($service, $name = null)
         {
-            $class = $name ?? get_class($service);
+            $class = $name ?? \get_class($service);
             $this->services[$class] = $service;
             $this->instantiated[$class] = $service;
             return $service;
@@ -49,7 +58,7 @@ namespace Cimply\Basics\ServiceLocator
          *
          * @return object
          */
-        public function getService(string $className = null)
+        public function getService(?string $className = null)
         {
             return $this->services[$className] ?? $this->services;
         }

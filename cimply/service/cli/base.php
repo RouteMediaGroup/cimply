@@ -1,4 +1,13 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
+
 namespace Cimply\Service\Cli {
     use \Cimply\System\System;
     class Base extends System {
@@ -6,25 +15,32 @@ namespace Cimply\Service\Cli {
         protected static $app, $currentSelect = null, $projects = [];
 
         static function CLI():bool {
-            $state = false;
-            if (php_sapi_name() == "cli-server") {
-                $extensions = array("php", "jpg", "jpeg", "gif", "css");
-                $path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-                $ext = pathinfo($path, PATHINFO_EXTENSION);
-                $state = true;
-                if (in_array($ext, $extensions)) {
-                    $state = false;
-                }
-            }
-            return $state;
+            return \in_array(PHP_SAPI, ['cli', 'phpdbg'], true);
         }
 
         protected static function GetMessage($tolower = true): string {
-            exec('.\execute.bat', $result);
-            return $tolower ? strtolower(end($result)) : end($result);
+            $message = '';
+
+            if (self::CLI()) {
+                if (\function_exists('readline')) {
+                    $message = (string)\readline();
+                } elseif (\defined('STDIN')) {
+                    $message = (string)\fgets(STDIN);
+                }
+            } else {
+                $message = (string)($_REQUEST['choice'] ?? '');
+            }
+
+            $message = trim($message);
+
+            return $tolower ? strtolower($message) : $message;
         }
 
         protected static function GetProjectName($project = null): ?string {
+            if ($project === null || $project === '') {
+                return null;
+            }
+
             $newName = str_replace([' ', '_', '-', '/', '\\', '&', '.', ',', '=', '?', '#'], ' ', ucwords(strtolower($project), ' '));
             return str_replace(' ','', ucwords(strtolower($newName), ' '));
         }
@@ -32,7 +48,12 @@ namespace Cimply\Service\Cli {
         protected static function LoadProject($projects, $show = true): array {
             $i = 0;
             $project = [];
-            $directories = array_diff(scandir($projects), array('..', '.'));
+            $directories = \scandir($projects);
+            if ($directories === false) {
+                return [];
+            }
+
+            $directories = array_diff($directories, array('..', '.'));
             foreach($directories as $value) {
                 $i++;
                 $project[strtolower($value)] = strtolower($value);
@@ -50,15 +71,18 @@ Inhalt;
         }
 
         protected function recurseCopy($src,$dst): bool { 
-            $dir = opendir($src); 
+            $dir = opendir($src);
+            if ($dir === false) {
+                return false;
+            }
             @mkdir($dst); 
             while(false !== ( $file = readdir($dir)) ) { 
                 if (( $file != '.' ) && ( $file != '..' )) { 
-                    if ( is_dir($src . '/' . $file) ) { 
-                        self::recurseCopy($src . '/' . $file,$dst . '/' . $file); 
+                    if ( is_dir($src . DIRECTORY_SEPARATOR . $file) ) { 
+                        self::recurseCopy($src . DIRECTORY_SEPARATOR . $file,$dst . DIRECTORY_SEPARATOR . $file); 
                     }
                     else {
-                        \is_file($srcFile = $src . '/' . $file) ? copy($srcFile,$dst . '/' . $file) : exit; 
+                        \is_file($srcFile = $src . DIRECTORY_SEPARATOR . $file) ? copy($srcFile,$dst . DIRECTORY_SEPARATOR . $file) : exit; 
                     }
                 } 
             } 
@@ -78,9 +102,11 @@ Inhalt;
         }
 
         protected function pushFile($src, $dest, $filename) {
-            $destDir = "{$src}\\{$dest}";
+            $destDir = $src . DIRECTORY_SEPARATOR . $dest;
             if((bool)(\is_dir($destDir)) ? true : \mkdir($destDir)) {
-               \is_file("{$src}\\{$filename}") ? rename("{$src}\\{$filename}", "{$destDir}\\{$filename}") : null; 
+               $source = $src . DIRECTORY_SEPARATOR . $filename;
+               $target = $destDir . DIRECTORY_SEPARATOR . $filename;
+               \is_file($source) ? rename($source, $target) : null; 
             }
         }
     }

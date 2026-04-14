@@ -33,7 +33,8 @@
  * @package    PHPLinq
  * @copyright  Copyright (c) 2008 - 2009 PHPLinq (http://www.codeplex.com/PHPLinq)
  */
-class PHPLinq_Function {
+class PHPLinq_Function {
+    private static $_counter = 0;
 	/**
 	 * Parameter names
 	 *
@@ -82,14 +83,15 @@ class PHPLinq_Function {
 	 *
 	 * @return mixed
 	 */
-	public function getFunctionReference() {
-		if (is_null($this->_functionReference)) {
-			// Compile anonymous function
-			$this->_functionReference = create_function($this->_parameterNames, $this->_functionCode);
-		}
-		
-		return $this->_functionReference;
-	}
+	public function getFunctionReference() {
+		if (is_null($this->_functionReference)) {
+			$functionName = '__cimply_linq_function_' . (++self::$_counter);
+			eval('function ' . $functionName . '(' . $this->_parameterNames . ') {' . $this->_functionCode . '}');
+			$this->_functionReference = $functionName;
+		}
+		
+		return $this->_functionReference;
+	}
 	
 	/**
 	 * Get parameters

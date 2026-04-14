@@ -12,11 +12,11 @@ Crypto:
     pepper: "0x42"
     passphrase: "/\/\A$T3R<>FTHEU/\/iV3R$3"
 
-Local: de_DE
+Locale: de_DE
 
 Assembly:
-    projectCtrl:            ".\cimply\app\projects\%project%\controller"
-    baseCtrl:               ".\cimply\app\base"
+    projectCtrl:            "app/projects/%project%/controller"
+    baseCtrl:               "app/base"
     
 App:
     baseUrl:                "/"
@@ -25,7 +25,7 @@ App:
     index:                  "index"
     project:                "defaultApp"
     projectPath:            "<?=__DIR__?>"
-    namespace:              "cimply\app\projects\%project%\app"
+    namespace:              "Cimply\\App\\Projects\\%project%\\App"
     database:               "prod"
     assets:                 "assets"
     commonDir:		        "common"

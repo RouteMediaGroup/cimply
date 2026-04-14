@@ -96,13 +96,12 @@ class PHPLinq_OrderByExpression extends PHPLinq_Expression {
     $this->_descending = $descending;
     
     // Compile comparer function
-    //     Check http://www.php.net/manual/nl/function.create-function.php#14322 for this chr(0).'$f' approach...
-    $f = substr($this->_expression->getFunctionReference(), 1); 
+    $f = $this->_expression->getFunctionReference();
     $this->_functionReference = new PHPLinq_Function(
         $defaultName . 'A, ' . $defaultName . 'B',
         "return $comparer(
-          call_user_func(chr(0).'$f', {$defaultName}A),
-          call_user_func(chr(0).'$f', {$defaultName}B)
+          call_user_func('$f', {$defaultName}A),
+          call_user_func('$f', {$defaultName}B)
         );"
     );  
   }

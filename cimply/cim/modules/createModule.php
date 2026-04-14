@@ -1,36 +1,15 @@
 <?php
-/**
- *
- * Copyright (c) 2012 - 2022 Cimply.Work
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * @category   Cimply.Work CIM
- * @package    Console
- * @copyright  Copyright (c) 2012 - 2022 Cimply.Work (http://www.cimply.work/v3)
- * @license    http://www.gnu.org/licenses/lgpl.txt  LGPL
- * @version    3.0.0, 2022-03-28
- */
-
-/**
- * Description of createModule
- * @author Michael Eckebrecht
- *
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
 declare(strict_types=1);
+
 namespace Cim\Modules {
     use \Cimply\Core\View\View;
     use \Cim\Modules\Model\ModulModel;

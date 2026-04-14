@@ -1,4 +1,12 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
 
 use JobRouter\Common\Converter\FileNameConverter;
 use JobRouter\JobViewer\FileIdentifier;
@@ -34,7 +42,7 @@ class jobarchiveSystemActivity extends SystemActivity
      *
      * @param Step $step
      */
-    public function __construct(Step $step = null)
+    public function __construct(?Step $step = null)
     {
         parent::__construct($step);
 

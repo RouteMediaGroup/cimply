@@ -1,9 +1,11 @@
 <?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
 namespace Cimply\System {
@@ -48,9 +50,9 @@ namespace Cimply\System {
         public static function Getter($key, $isArray = true) {
             if($isArray) {
                 $result = array();
-                $result[$key] = self::$vars[$key];
+                $result[$key] = self::$vars[$key] ?? null;
             } else {
-                $result = self::$vars[$key];
+                $result = self::$vars[$key] ?? null;
             }
             return $result;
         }
@@ -102,7 +104,7 @@ namespace Cimply\System {
 
         public static function SetSession($varName, $varValue) {
             if(isset($varName) && (isset($varValue))) {
-                if(isset($_SESSION[$varName]) && is_array($_SESSION[$varName])) {
+                if(isset($_SESSION[$varName]) && is_array($_SESSION[$varName]) && is_array($varValue)) {
                     $_SESSION[$varName] = array_merge($_SESSION[$varName], $varValue); 
                 } else {
                     $_SESSION[$varName] = $varValue;  
@@ -126,12 +128,14 @@ namespace Cimply\System {
             if(!($varName)) {
                 $data = isset($_SESSION) ? $_SESSION : [];
                 foreach($data as $key=>$vars) {
-                    if(!($vars == 'project')) {
+                    if($key !== 'project') {
                         unset($_SESSION[$key]);
                     }
                 }
             } else {
-                isset($_SESSION[$varName]) ? $_SESSION[$varName] = null : null;
+                if (isset($_SESSION[$varName])) {
+                    unset($_SESSION[$varName]);
+                }
             }
         }
 
@@ -212,7 +216,7 @@ namespace Cimply\System {
                     break;
 
                 case "xml":
-                    $xml = new SimpleXMLElement('<root/>');
+                    $xml = new \SimpleXMLElement('<root/>');
                     array_walk_recursive($result, array ($xml, 'addChild'));
                     print $xml->asXML();
                     break;
@@ -223,7 +227,7 @@ namespace Cimply\System {
 
                 case "json":
                     header('Content-Type: application/json');
-                    die(json_encode($result, true));
+                    die(json_encode($result));
                     break;
 
                 case "_json":
@@ -259,10 +263,11 @@ namespace Cimply\System {
                     break;
 
                 case "unserialize":
-                    return unserialize($result);
+                    return unserialize($result, ['allowed_classes' => true]);
                     break;
 
                 case "array":
+                    $array = [];
                     foreach($result as $key=>$val) {
                         $array[$key] = $val;
                     }
@@ -270,7 +275,7 @@ namespace Cimply\System {
                     break;
 
                 case "yaml":
-                    return self::ArrayToYAML($result);
+                    return \YamlParser::ArrayToYAML($result);
                     break;
                 
                 case "object":

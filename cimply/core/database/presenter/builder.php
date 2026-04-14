@@ -1,4 +1,12 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
 
 namespace Cimply\Core\Database\Presenter
 {
@@ -28,7 +36,7 @@ namespace Cimply\Core\Database\Presenter
                     })($entityObject) : $this->setTable($entityObject);
                 }
 
-                public function setNamespace(string $namespace = null) {
+                public function setNamespace(?string $namespace = null) {
                     isset($namespace) ? $this->namespace = $namespace.'.' : $this->namespace;
                     return $this;
                 }
@@ -38,13 +46,13 @@ namespace Cimply\Core\Database\Presenter
                     return $this;
                 }
 
-                public function setTable(string $table = null) {
-                    $this->table = $table ? $table : $this->table;
+                public function setTable(?string $table = null) {
+                    $this->table = !(empty($table)) ? $table : $this->table;
                     return $this;
                 }
 
                 public function setParams(array $params = []) {
-                    $this->params = $params ? $params : $this->$params;
+                    $this->params = !(empty($params)) ? $params : $this->$params;
                     return $this;
                 }
 
@@ -68,7 +76,7 @@ namespace Cimply\Core\Database\Presenter
                  * @param string $string
                  * @return Presenter
                  */
-                public function on(string $string = null, string $operator = 'NULL') {
+                public function on(?string $string = null, string $operator = 'NULL') {
                     //$this->where = null;
                     isset($string) ? $this->on = ''.($this->tables[$operator] ?? NULL).' ON '.$string.' ' : $this->on = ' '.($this->tables[$operator] ?? null);
 
@@ -193,7 +201,9 @@ namespace Cimply\Core\Database\Presenter
                             $i++;
                         }
                         $this->selector = $output[0];
+
                         !isset($this->join) ? $this->join() : null;
+                        $this->combine = implode(' '.$k.' ', $this->tables);
                         //$this->combine = $this->selectBy;
                     }
                     return $this;

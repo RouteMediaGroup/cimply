@@ -1,9 +1,11 @@
 <?php
-
 /*
- * CIMPLY FrameWork V 1.1.0.1
- * Michael Eckebrecht <info@cimply.work>
- * Copyright (c) 2010 - 2017 RouteMedia. All rights reserved.
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
 namespace Cimply\Core\Annotation {
@@ -18,7 +20,11 @@ namespace Cimply\Core\Annotation {
 
         use \Cast;
 
-        private $rawDocBlock, $parameters, $keyPattern = "[A-z0-9\_\-]+", $endPattern = "[ ]*(?:@|\r\n|\n)", $parsedAll = false;
+        private string $rawDocBlock = '';
+        private array $parameters = [];
+        private string $keyPattern = "[A-z0-9\_\-]+";
+        private string $endPattern = "[ ]*(?:@|\r\n|\n)";
+        private bool $parsedAll = false;
 
         /**
          *
@@ -29,7 +35,7 @@ namespace Cimply\Core\Annotation {
             $arguments = isset($args[0]) && isset($args[1]) ? array($args[0], $args[1]) : func_get_args();
             $count = count($arguments);
             if ($count === 0) {
-                throw new \Exception("No zero argument constructor allowed");
+                throw new \InvalidArgumentException("No zero argument constructor allowed");
             } else if ($count === 1) {
                 $reflection = new \ReflectionClass($arguments[0]);
             } else {
@@ -38,10 +44,11 @@ namespace Cimply\Core\Annotation {
                     $reflection = new \ReflectionMethod($arguments[0], $arguments[1]);
                 } else if ($type === "property") {
                     $reflection = new \ReflectionProperty($arguments[0], $arguments[1]);
+                } else {
+                    throw new \InvalidArgumentException("Unsupported annotation target '{$type}'.");
                 }
             }
-            $this->rawDocBlock = $reflection->getDocComment();
-            $this->parameters = array();
+            $this->rawDocBlock = (string)($reflection->getDocComment() ?: '');
         }
 
         final function Cast($mainObject, $selfObject = self::class) : self
@@ -50,6 +57,10 @@ namespace Cimply\Core\Annotation {
         }
 
         private function parseSingle($key) {
+            if ($this->rawDocBlock === '') {
+                return null;
+            }
+
             if (isset($this->parameters[$key])) {
                 return $this->parameters[$key];
             } else {
@@ -79,6 +90,11 @@ namespace Cimply\Core\Annotation {
         }
 
         private function parse() {
+            if ($this->rawDocBlock === '') {
+                $this->parameters = [];
+                return;
+            }
+
             $pattern = "/@(?=(.*)" . $this->endPattern . ")/U";
             preg_match_all($pattern, $this->rawDocBlock, $matches);
             foreach ($matches[1] as $rawParameter) {
@@ -131,7 +147,8 @@ namespace Cimply\Core\Annotation {
         private function parseValue($originalValue) {
             if ($originalValue && $originalValue !== 'null') {
                 // try to json decode, if cannot then store as string
-                if (($json = json_decode($originalValue, TRUE)) === NULL) {
+                $json = json_decode($originalValue, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
                     $value = $originalValue;
                 } else {
                     $value = $json;

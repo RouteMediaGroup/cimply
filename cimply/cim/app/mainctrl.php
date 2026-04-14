@@ -1,14 +1,27 @@
 <?php
-/**
- * Description of
- *
- * @author MikeCorner BaseCtrl
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
 declare(strict_types=1);
+
 namespace App {
     use \Cimply\Core\View\{View};
     use \Cimply\App\Settings;
+    use Cim\Modules\{
+        BuildProject,
+        CreateController,
+        CreateEntity,
+        CreateModule,
+        NewInstance,
+        Services,
+        UpdateModel
+    };
     class MainCtrl extends \Cimply\Service\Cli\Base
     {
         protected static $app, $currentSelect = null;
@@ -22,6 +35,7 @@ namespace App {
          *
          */
         final static function Init($app = null, $menu = true): void {
+            self::$app = $app ?? self::$app;
             if($menu) {
                 print "\n\r";
                 print View::GetVar("Title");
@@ -39,6 +53,11 @@ namespace App {
                 print(self::GetSession('Project') != '' ? '@'.self::GetSession('Project').':' : '');
                 print(View::GetVar("Execute"). " ");
             }
+
+            if (!parent::CLI()) {
+                return;
+            }
+
             self::MainMenu(parent::GetMessage());
         }
 
@@ -78,11 +97,15 @@ namespace App {
                 case 'clear cache':
                     self::ClearSession('Project');
                     print('clear cache success.');
+                    self::Init(self::$app);
+                    return;
                     break;
                 case 9:
                 case 'help':
-                    print(passthru("CHOICE /?"));
+                    print("1: Create Module\n2: Create Controller\n3: Create Entity\n4: Init Project\n5: Build Project\n6: Update Project\n7: Settings\n8: Clear Cache\n9: Help\n10: Exit\n");
                     print "\n\r";
+                    self::Init(self::$app);
+                    return;
                     break;
                 case 10:
                 case 'exit':
@@ -91,9 +114,42 @@ namespace App {
                 default:
                     print("invalid value - try again: ");
                     self::Init(self::$app, false);
+                    return;
             }
-            ($close !== true) ? passthru('.\cim.bat '.$goto) : die(passthru("EXIT"));
-            self::Init();
+
+            if ($close === true) {
+                return;
+            }
+
+            self::dispatch($goto);
+            self::Init(self::$app);
+        }
+
+        private static function dispatch(?string $goto): void
+        {
+            switch ($goto) {
+                case 'create module':
+                    CreateModule::Init();
+                    return;
+                case 'create controller':
+                    CreateController::Init();
+                    return;
+                case 'create entity':
+                    CreateEntity::Init();
+                    return;
+                case 'init project':
+                    NewInstance::Init();
+                    return;
+                case 'build project':
+                    BuildProject::Init(self::$app);
+                    return;
+                case 'update project':
+                    UpdateModel::Init(self::GetSession('Project'));
+                    return;
+                case 'settings':
+                    Services::Init();
+                    return;
+            }
         }
     }
 }

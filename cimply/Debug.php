@@ -1,28 +1,29 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
+
 namespace Cimply {
-    use Cimply\System\Settings;
-    class Debug extends \Exception {
-        static $loader;
-        function __construct($assembly = []) {
-            self::autoLoader(function ($usings = []) use($assembly) {
-                set_include_path(get_include_path() . PATH_SEPARATOR . implode(PATH_SEPARATOR, array_merge($usings ?? [], $assembly)));
-                spl_autoload_register(function($clsName) {
-					is_callable($clsName) ? : spl_autoload(str_replace(__NAMESPACE__.'\\', '', $clsName));
-				});
-			});
+
+    class Debug extends Work {
+        public function __construct(array $assembly = [])
+        {
+            parent::__construct($assembly);
         }
-        function app($projectName = null): App\Run {
-            if(!($projectName)) {
-                throw new \Exception("Error: load non-project.");
+
+        public function app(?string $projectName = null): App\Run
+        {
+            $run = parent::app($projectName)->run();
+            if ($run === null) {
+                throw new \RuntimeException('Error: load non-project.');
             }
-            return new App\Run($projectName, self::$loader, Settings::Assembly);
+
+            return $run;
         }
-        private static function autoLoader($loader = null, $assembly = []): void {
-            isset(self::$loader) ? : self::$loader = $loader;
-            (self::$loader)($assembly).($loader)(Settings::Assembly);
-        }
-        function __destruct() {
-            self::$loader = null;
-        } 
     }
 }

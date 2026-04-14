@@ -1,4 +1,12 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
 
 namespace Cimply\Core\Database
 {
@@ -37,21 +45,7 @@ namespace Cimply\Core\Database
         }
 
         public function execute($name = null, $value = null): Provider  {
-      
-            //Provider::Cast($this->manager)->dbm->prepare($this->query());
-
             return Provider::Cast($this->manager)->dbq($this->query(), $this->params);
-            //die(var_dump($stmt->fetchStyleMode(FetchStyleList::FETCH)->execute()));
-            
-            //$result = Provider::Cast($this->manager)->dbq($this->query(), $this->params);
-            //$result = $this->manager->dbq($this->query(), $this->params);
-            /*if(isset($value)) {
-                isset($name) ? $result = array($name => array($value => $result[$name])) : $result = array($value => $result);
-                return $result;
-            }
-            (isset($name) && isset($result[$name])) ? $result = $result[$name] : null;
-            */
-         
         }
 
         public function update($entity) {

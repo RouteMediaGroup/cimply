@@ -1,146 +1,139 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
 
 namespace Cimply\Core\Database\Manager
 {
-	/**
-	 * PDO short summary.
-	 *
-	 * PDO description.
-	 *
-	 * @version 1.0
-	 * @author MikeCorner
-	 */
     use Cimply\Core\Database\{Provider, Enum\FetchStyleList};
-    use \Cimply\Core\Model\EntityBase;
-    use \Cimply\Interfaces\Database\IProvider;
-	class SqlSrv extends Provider implements IProvider
-	{
+    use Cimply\Core\Model\EntityBase;
+    use Cimply\Interfaces\Database\IProvider;
+    use PDO;
+    use PDOStatement;
 
-        private $bindTypes  = '', $typeSafe   = false;
+    class SqlSrv extends Provider implements IProvider
+    {
+        private string $bindTypes = '';
+        private bool $typeSafe = false;
+        public $dbm = null;
+        public $statement = null;
 
-        function __construct(\PDO $manager, $sth = null) {
-            $this->statement = $sth;
+        public function __construct(PDO $manager, ?PDOStatement $sth = null)
+        {
             $this->dbm = $manager;
+            $this->statement = $sth;
         }
 
         #region Cimply\Interfaces\Database\IQuery Members
 
-        /**
-         *
-         * @param  $arr
-         * @param  $table
-         * @param  $where
-         * @param  $db
-         */
-        function save(EntityBase $arr1 = null,  $arr2 = null, $where = null, $table = null, $db = null): bool
+        public function save(?EntityBase $arr1 = null, $arr2 = null, $where = null, $table = null, $db = null): bool
         {
-            parent::save($arr);
-            if ($row = array_intersect_key((array)$arr->storageData() ?? [], (array)$this->fetch()) ?? []) {
-                // update
-                $result = '';
-                foreach ($row as $key => $val) {
-                    $result .= $key . "='" . $val . "', ";
-                }
-                $query = sprintf("UPDATE %s SET %s %s", $table ?? $arr->table, substr($result, 0, -2), trim($where));
+            parent::save($arr1);
+            $row = array_intersect_key(
+                (array)$arr1->storageData() ?? [],
+                (array)$this->fetch() ?? []
+            );
+            
+            if ($row) {
+                // Update
+                $setClause = implode(', ', array_map(fn($key, $val) => "$key = :$key", array_keys($row), array_values($row)));
+                $query = sprintf("UPDATE %s SET %s %s", $table ?? $arr1->table, $setClause, trim($where));
             } else {
-                $query = sprintf("INSERT INTO %s (%s) VALUES ('%s')", $table ?? $arr->table, implode(',', array_keys((array)$row)), implode("', '", array_values((array)$storageData)));
+                // Insert
+                $columns = implode(',', array_keys($row));
+                $placeholders = implode(',', array_map(fn($key) => ":$key", array_keys($row)));
+                $query = sprintf("INSERT INTO %s (%s) VALUES (%s)", $table ?? $arr1->table, $columns, $placeholders);
             }
-            $this->beginTransaction() ? $arr->execute($query) : null;
-            die(var_dump($query));
+
+            $this->beginTransaction();
+            $stmt = $this->dbm->prepare($query);
+
+            foreach ($row as $key => $val) {
+                $stmt->bindValue(":$key", $val);
+            }
+
+            $success = $stmt->execute();
+            $success ? $this->commit() : $this->dbm->rollBack();
+            
+            return $success;
         }
 
-        /**
-         *
-         * @param string $schema
-         * @param  $db
-         */
-        function getIndexField(string $schema, $db = null)
+        public function getIndexField(string $schema, $db = null)
         {
-            // TODO: implement the function Cimply\Interfaces\Database\IQuery::getIndexField
+            // TODO: Implement the function Cimply\Interfaces\Database\IQuery::getIndexField
         }
 
-        /**
-         * Summary of beginTransaction
-         */
-        function beginTransaction():Provider
+        public function beginTransaction(): Provider
         {
             $this->dbm->beginTransaction();
             return parent::beginTransaction();
         }
 
-        /**
-         * Summary of commit
-         */
-        function commit():Provider
+        public function commit(): Provider
         {
             $this->dbm->commit();
             return parent::commit();
         }
 
-        function getLastId()
+        public function getLastId(): int
         {
-            return $this->dbm->insert_id();
+            return (int) $this->dbm->lastInsertId();
         }
 
-        function errorHanlder() {
-            return $this->dbm->error();
+        public function errorHandler(): array
+        {
+            return $this->dbm->errorInfo();
         }
 
         #endregion
 
         #region Cimply\Interfaces\Database\IQuery Members
 
-        /**
-         *
-         * @param string $sql
-         *
-         * @return void
-         */
-        function prepare($sql): void
+        public function prepare(string $sql): void
         {
             $this->statement = $this->dbm->prepare($sql);
         }
 
-        function fetch()
+        public function fetch(): mixed
         {
-            $fetchResult = NULL;
-            $result = $this->statement->get_result();
-            switch ($this->fetchStyle)
-            {
-                case FetchStyleList::FETCHALL:
-                    $fetchResult = $result->fetch_all();
-                    break;
-                case FetchStyleList::FETCHARRAY:
-                    $fetchResult = $result->fetch_array();
-                    break;
-                case FetchStyleList::FETCHASSOC:
-                    $fetchResult = $result->fetch_assoc();
-                    break;
-                case FetchStyleList::FETCHOBJECT:
-                    $fetchResult = $result->fetch_object();
-                    break;
-                case FetchStyleList::FETCHFIELD:
-                    $fetchResult = $result->fetch_field();
-                    break;
-                default:
-                    $fetchResult = $result->fetch_array();
-                    break;
-            }
+            $fetchResult = null;
 
+            if ($this->statement) {
+                switch ($this->fetchStyle) {
+                    case FetchStyleList::FETCHALL:
+                        $fetchResult = $this->statement->fetchAll();
+                        break;
+                    case FetchStyleList::FETCHARRAY:
+                        $fetchResult = $this->statement->fetch(PDO::FETCH_BOTH);
+                        break;
+                    case FetchStyleList::FETCHASSOC:
+                        $fetchResult = $this->statement->fetch(PDO::FETCH_ASSOC);
+                        break;
+                    case FetchStyleList::FETCHOBJECT:
+                        $fetchResult = $this->statement->fetch(PDO::FETCH_OBJ);
+                        break;
+                    case FetchStyleList::FETCHFIELD:
+                        $fetchResult = $this->statement->fetch(PDO::FETCH_COLUMN);
+                        break;
+                    default:
+                        $fetchResult = $this->statement->fetch(PDO::FETCH_BOTH);
+                        break;
+                }
+            }
 
             return $fetchResult;
         }
 
-        /**
-         */
-        function execute(): bool
+        public function execute(): bool
         {
-            //empty($this->params) ? : $this->doBindParam($this->typeSafe, 'bind_param');
-            //$this->statement->execute();
-            return $this->statement ? $this->statement->execute($this->params) : false;
+            return $this->statement ? $this->statement->execute() : false;
         }
 
         #endregion
-
     }
 }

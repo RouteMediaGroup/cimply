@@ -1,53 +1,88 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
+
 namespace { 
     abstract class Crypto {      
         
         public static function Encrypt($data, $cipher = "", $pepper = "") : string {
+            $cipher = $cipher !== '' ? $cipher : 'AES-256-CBC';
+            $pepper = (string)$pepper;
             $serialized = serialize($data);
-            $ivlen = openssl_cipher_iv_length($cipher);
-            $iv = openssl_random_pseudo_bytes($ivlen);
-            $ciphertext_raw = openssl_encrypt($serialized, $cipher, $pepper, $options=OPENSSL_RAW_DATA, $iv);
-            $hmac = hash_hmac('sha256', $ciphertext_raw, $pepper, $as_binary = true);
-            $ciphertext = base64_encode( $iv.$hmac.$ciphertext_raw );
-            return base64_encode($pepper . gzcompress($ciphertext));
+            $ivlen = \openssl_cipher_iv_length($cipher);
+            if ($ivlen === false) {
+                throw new \RuntimeException("Unsupported cipher '{$cipher}'.");
+            }
+
+            $iv = \random_bytes($ivlen);
+            $ciphertext_raw = \openssl_encrypt($serialized, $cipher, $pepper, OPENSSL_RAW_DATA, $iv);
+            if (!\is_string($ciphertext_raw)) {
+                return '';
+            }
+
+            $hmac = \hash_hmac('sha256', $ciphertext_raw, $pepper, true);
+            $ciphertext = \base64_encode($iv.$hmac.$ciphertext_raw);
+
+            return \base64_encode($pepper . \gzcompress($ciphertext));
         }
 
         public static function Decrypt($data, $cipher = "", $pepper = "") {
-            if($data !== '=') {
-                $dataDecode = base64_decode($data);
-                if (substr($dataDecode, 0, strlen($pepper)) != $pepper)
-                    return false;
-                
-                $ciphertext = gzuncompress(substr($dataDecode, strlen($pepper)));
-                $c = base64_decode($ciphertext);
-                $ivlen = openssl_cipher_iv_length($cipher);
-                $iv = substr($c, 0, $ivlen);
-                $hmac = substr($c, $ivlen, $sha2len=32);
-                $ciphertext_raw = substr($c, $ivlen+$sha2len);
-                $original_plaintext = openssl_decrypt($ciphertext_raw, $cipher, $pepper, $options=OPENSSL_RAW_DATA, $iv);
-                $calcmac = hash_hmac('sha256', $ciphertext_raw, $pepper, $as_binary = true);
-                if (hash_equals($hmac, $calcmac))
-                {
-                    return unserialize($original_plaintext);
-                }
+            $cipher = $cipher !== '' ? $cipher : 'AES-256-CBC';
+            $pepper = (string)$pepper;
+
+            if ($data === '=') {
+                return '';
             }
-            return '';
+
+            $dataDecode = \base64_decode((string)$data, true);
+            if (!\is_string($dataDecode) || !str_starts_with($dataDecode, $pepper)) {
+                return false;
+            }
+            
+            $ciphertext = \gzuncompress(substr($dataDecode, strlen($pepper)));
+            if (!\is_string($ciphertext)) {
+                return false;
+            }
+
+            $decodedCipher = \base64_decode($ciphertext, true);
+            if (!\is_string($decodedCipher)) {
+                return false;
+            }
+
+            $ivlen = \openssl_cipher_iv_length($cipher);
+            if ($ivlen === false) {
+                return false;
+            }
+
+            $iv = substr($decodedCipher, 0, $ivlen);
+            $hmac = substr($decodedCipher, $ivlen, 32);
+            $ciphertext_raw = substr($decodedCipher, $ivlen + 32);
+            $original_plaintext = \openssl_decrypt($ciphertext_raw, $cipher, $pepper, OPENSSL_RAW_DATA, $iv);
+
+            if (!\is_string($original_plaintext)) {
+                return false;
+            }
+
+            $calcmac = \hash_hmac('sha256', $ciphertext_raw, $pepper, true);
+            if (\hash_equals($hmac, $calcmac)) {
+                return \unserialize($original_plaintext, ['allowed_classes' => true]);
+            }
+
+            return false;
         }
         
         public static function NoSSLEncrypt($array, $salt = "", $pepper = "") {
-            $serialized = serialize($array);
-            $crypted = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $salt, $serialized, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND));
-            return \base64_encode($pepper . gzcompress($crypted));
+            return self::Encrypt($array, 'AES-256-CBC', hash('sha256', (string)$salt . (string)$pepper));
         }
 
         public static function NoSSLDecrypt($data, $salt = "", $pepper = "") {
-            $data = \base64_decode($data);
-            if (substr($data, 0, strlen($pepper)) != $pepper)
-                return false;
-            $data = substr($data, strlen($pepper));
-            $uncompressed = gzuncompress($data);
-            $decrypted = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $salt, $uncompressed, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND));
-            return unserialize($decrypted);
+            return self::Decrypt($data, 'AES-256-CBC', hash('sha256', (string)$salt . (string)$pepper));
         }
         
     }

@@ -1,24 +1,13 @@
 <?php
-
 /*
-# 200 OK 
-# 301 Moved Permanently 
-# 302 Found 
-# 304 Not Modified 
-# 307 Temporary Redirect 
-# 400 Bad Request 
-# 401 Unauthorized 
-# 403 Forbidden 
-# 404 Not Found 
-# 500 Internal Server Error 
-# 501 Not Implemented
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
-/**
- * Description of CIM
- *
- * @author MikeCorner
- */
 namespace { 
     abstract class Redirection {
 

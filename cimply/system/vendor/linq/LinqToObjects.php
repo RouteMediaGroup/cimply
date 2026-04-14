@@ -292,9 +292,9 @@ class PHPLinq_LinqToObjects implements PHPLinq_ILinqProvider {
         ";
         for ($i = 0; $i < count($this->_orderBy); $i++) {
           
-          $f = substr($this->_orderBy[$i]->getFunctionReference(), 1); 
+          $f = $this->_orderBy[$i]->getFunctionReference(); 
           $compareCode .= "
-          \$result = call_user_func_array(chr(0).'$f', array({$this->_from}A, {$this->_from}B));
+          \$result = call_user_func_array('$f', array({$this->_from}A, {$this->_from}B));
           if (\$result != 0) {
             return \$result;
           }
@@ -302,7 +302,7 @@ class PHPLinq_LinqToObjects implements PHPLinq_ILinqProvider {
           
         }
         $compareCode .= "return \$result;";
-        $sorter = create_function($this->_from . 'A, ' . $this->_from . 'B', $compareCode);
+        $sorter = eval('return function(' . $this->_from . 'A, ' . $this->_from . 'B) {' . $compareCode . '};');
       }
       
       // Sort!

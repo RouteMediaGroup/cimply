@@ -406,7 +406,10 @@ class PHPLinq_LinqToZendDb implements PHPLinq_ILinqProvider {
     // Log query string
     if (!is_null(self::$_queryCallback)) {
       if (!is_array(self::$_queryCallback) && in_array(self::$_queryCallback, self::$_internalFunctions)) {
-        self::$_queryCallback = create_function('$query', self::$_queryCallback . '($query);');
+        $queryCallback = self::$_queryCallback;
+        self::$_queryCallback = static function ($query) use ($queryCallback) {
+          $queryCallback($query);
+        };
       }
       call_user_func(self::$_queryCallback, $zendDbSelect->__toString());
     }

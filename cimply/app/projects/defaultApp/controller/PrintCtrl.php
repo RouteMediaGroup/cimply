@@ -1,15 +1,11 @@
 <?php
-
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of IndexController
- *
- * @author MikeCorner
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
 namespace Cimply_Cim_App {
@@ -92,7 +88,7 @@ namespace Cimply_Cim_App {
          * @param type $debug
          * 
          */
-        private function TemplateEngine(\Smarty $templateEngine = null, $system = null, $params = null, $debug = false) {
+        private function TemplateEngine(?\Smarty $templateEngine = null, $system = null, $params = null, $debug = false) {
             try {
                 if (\get_class($templateEngine) == 'Smarty') {
                     $this->templateEngine = $templateEngine;

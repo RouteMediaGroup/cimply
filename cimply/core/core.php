@@ -1,8 +1,17 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
+
 namespace Cimply\Core {
     use \Cimply\Interfaces\{ICast};
-
     abstract class Core implements ICast {
+        use \Cast;
         public static $fillable;
 
         /**
@@ -12,8 +21,8 @@ namespace Cimply\Core {
          * @return mixed
          */
         public static function Cast($mainObject, $selfObject = self::class) {
-            $Cast = (ICast::Cull);
-            return $Cast($mainObject, $selfObject);
+            //$Cast = (ICast::Cull);
+            return static::Cull($mainObject, $selfObject);
         }
 
         /**

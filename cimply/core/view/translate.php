@@ -1,4 +1,12 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
 
 namespace Cimply\Core\View {
 
@@ -26,17 +34,21 @@ namespace Cimply\Core\View {
         }
 
         //Get Translation
-        static function GetTranslastion(string $s = "", $langCode = 'de_DE') {
+        static function GetTranslastion(?string $s = "", $langCode = 'de_DE') {
             $matches = [];
-            @preg_match_all(self::$pattern['Trans'], $s, $matches);
-            if(isset($matches[1])) {
-                $i = 0;
-                foreach($matches[1] as $key => $value) {
-                    if($trans = self::WordTranslation($matches[1][$i], $langCode)) {
-                        $s = str_replace($matches[0][$i], $trans, $s);
+            if(is_string($s)) {  
+                @preg_match_all(self::$pattern['Trans'], $s, $matches);
+                if(isset($matches[1])) {
+                    $i = 0;
+                    foreach($matches[1] as $key => $value) {
+                        if($trans = self::WordTranslation($matches[1][$i], $langCode)) {
+                            $s = str_replace($matches[0][$i], $trans, $s);
+                        }
+                        $i++;
                     }
-                    $i++;
                 }
+            } else {
+                $s = '';
             }
             return $s;
         }

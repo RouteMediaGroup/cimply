@@ -1,9 +1,11 @@
 <?php
-
 /*
- * CIMPLY FrameWork V 1.0.0.1
- * Michael Eckebrecht <info@cimply.work>
- * Copyright (c) 2010 - 2016 RouteMedia. All rights reserved.
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
 namespace Cimply\Core\Document {
@@ -18,7 +20,7 @@ namespace Cimply\Core\Document {
             return Core::Cast($mainObject, $selfObject, true);
         }
 
-        function createDomElement($source, \DOMNode $domDocument = null) {
+        function createDomElement($source, ?\DOMNode $domDocument = null) {
             libxml_use_internal_errors(true);
             $domDocument ?? $domDocument = \self;
             $tmpDoc = new \DOMDocument();
@@ -165,7 +167,7 @@ namespace Cimply\Core\Document {
          * @param \DOMElement $domElem
          * @param mixed $attrValue
          */
-        protected function setAttributes(\DOMElement $domElem = null, $attrValue): void {
+        protected function setAttributes(?\DOMElement $domElem = null, $attrValue): void {
             foreach($attrValue as $key => $value) {
                 $this->setAttribute($domElem, $key, $value);
             }

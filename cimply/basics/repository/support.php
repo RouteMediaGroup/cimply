@@ -1,4 +1,12 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
 
 namespace Cimply\Basics\Repository
 {
@@ -16,9 +24,12 @@ namespace Cimply\Basics\Repository
 	class Support
 	{
         use \Cast;
-        private $config = null;
-        function __construct($config = []) {
-            isset($this->config) ? : $this->config = $config;
+        private mixed $config = null;
+
+        public function __construct($config = []) {
+            if ($this->config === null) {
+                $this->config = $config;
+            }
         }
 
         public final static function Cast($mainObject, $selfObject = self::class): self {
@@ -31,8 +42,11 @@ namespace Cimply\Basics\Repository
          * @return mixed
          */
         public final function getRootSettings(?string $keyValue = null) {
-            $result = (bool)RootSettings::isValidValue($keyValue) ? !(empty($this->config[$keyValue])) ? $this->config[$keyValue] : $this->config ?? NULL : RootSettings::GetValueList();
-            return $result;
+            if ($keyValue === null) {
+                return $this->config;
+            }
+
+            return $this->getValue((array)$this->config, $keyValue);
         }
 
         /**
@@ -41,8 +55,8 @@ namespace Cimply\Basics\Repository
          * @return mixed
          */
         public final function getSystemSettings(?string $keyValue = null) {
-            $result = (bool)SystemSettings::isValidValue($keyValue) ? !(empty($this->config[RootSettings::SYSTEM][$keyValue])) ? $this->config[RootSettings::SYSTEM][$keyValue] : $this->config[RootSettings::SYSTEM] ?? NULL : $this->config[RootSettings::SYSTEM];
-            return $result;
+            $config = (array)$this->getValue((array)$this->config, RootSettings::SYSTEM);
+            return $keyValue !== null ? $this->getValue($config, $keyValue) : $config;
         }
 
         /**
@@ -51,8 +65,8 @@ namespace Cimply\Basics\Repository
          * @return mixed
          */
         public final function getAppSettings(?string $keyValue = null) {
-            $result = (bool)AppSettings::isValidValue($keyValue) ? !(empty($this->config[RootSettings::APP][$keyValue])) ? $this->config[RootSettings::APP][$keyValue] : $this->config[RootSettings::APP] ?? NULL : $this->config[RootSettings::APP];
-            return $result;
+            $config = (array)$this->getValue((array)$this->config, RootSettings::APP);
+            return $keyValue !== null ? $this->getValue($config, $keyValue) : $config;
         }
 
         /**
@@ -61,8 +75,7 @@ namespace Cimply\Basics\Repository
          * @return mixed
          */
         public final function getScopeSettings(?string $keyValue = null) {
-            $result = $this->config[$keyValue] ?? $this->config;
-            return $result;
+            return $keyValue !== null ? $this->getValue((array)$this->config, $keyValue) : $this->config;
         }
 
         /**
@@ -71,8 +84,7 @@ namespace Cimply\Basics\Repository
          * @return mixed
          */
         public final function getRouteSettings(?string $keyValue) {
-            $result = (bool)RouteSettings:: isValidValue($keyValue) ? $this->config[$keyValue] : NULL;
-            return $result;
+            return $keyValue !== null ? $this->getValue((array)$this->config, $keyValue) : null;
         }
 
         /**
@@ -80,15 +92,49 @@ namespace Cimply\Basics\Repository
          * @return mixed
          */
         public final function getAssembly() {
-            $result = $this->config['Assembly'] ?? null;
-            return $result;
+            return $this->getValue((array)$this->config, 'Assembly');
         }
 
         public final function getSettings($args = [], $key = null) {
-            $result = \ArrayParser::FlattenArray(array_merge($args, $this->config), false);
-            isset($key) ? $result = $result->{$key} ?? null : null;
-            return $result;
+            $result = \ArrayParser::FlattenArray(array_merge((array)$args, (array)$this->config), false);
+            return $key !== null ? $this->getValue($result, $key) : $result;
         }
 
+        private function getValue(array|object|null $source, string $key): mixed
+        {
+            $source = $this->normalizeSource($source);
+
+            if (array_key_exists($key, $source)) {
+                return $source[$key];
+            }
+
+            $normalizedNeedle = $this->normalizeKey($key);
+            foreach ($source as $candidateKey => $value) {
+                if ($this->normalizeKey((string)$candidateKey) === $normalizedNeedle) {
+                    return $value;
+                }
+            }
+
+            return null;
+        }
+
+        private function normalizeSource(array|object|null $source): array
+        {
+            if (\is_array($source)) {
+                return $source;
+            }
+
+            if (\is_object($source)) {
+                return \get_object_vars($source);
+            }
+
+            return [];
+        }
+
+        private function normalizeKey(string $key): string
+        {
+            $normalized = preg_replace('/[^a-z0-9]+/i', '', strtolower($key));
+            return $normalized !== null ? $normalized : strtolower($key);
+        }
     }
 }

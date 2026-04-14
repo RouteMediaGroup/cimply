@@ -1,0 +1,76 @@
+Cimply.Work Enterprise License
+Version 4.0.1 and later
+
+Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+
+1. Ownership
+The Software and all associated intellectual property rights are and remain the exclusive property of RouteMedia®.
+This license grants usage rights only and does not transfer ownership.
+
+2. License Grant
+Subject to a valid commercial agreement, RouteMedia® grants the Licensee a non-exclusive,
+non-transferable, non-sublicensable right to use the Software for internal business purposes
+or as part of authorized services.
+
+3. SaaS / Hosting Usage
+The Licensee is permitted to use the Software to provide services to its own customers
+(e.g., SaaS, hosted applications, APIs), provided that:
+
+- the Software itself is not distributed or exposed in source or reusable form
+- access is limited to the Licensee’s service offering
+- customers do not receive rights to the Software itself
+
+4. Restrictions
+Unless explicitly authorized in writing by RouteMedia®, the Licensee may NOT:
+
+- sell, resell, sublicense, distribute, or commercially transfer the Software itself
+- provide the Software as a standalone product
+- grant third parties direct access to the Software beyond normal service usage
+- reverse engineer, decompile, or create derivative frameworks based on the Software
+- remove or alter copyright or licensing information
+
+5. Partner / Reseller Model
+Authorized partners may use the Software in customer projects or resell services built on top of it,
+provided that:
+
+- a valid partner or reseller agreement with RouteMedia® exists
+- the Software itself is not transferred or licensed independently
+- each end customer uses the Software only within the partner’s service context or under a separate license agreement
+
+6. Customer Usage
+End customers may use the Software only:
+
+- as part of a delivered solution
+- within a hosted (SaaS) environment
+- or under a separate commercial license issued by RouteMedia®
+
+No implicit license is granted to end users beyond the defined usage scope.
+
+7. No Redistribution
+The Software may not be copied, distributed, published, or made available to third parties
+in any form outside the explicitly permitted use cases.
+
+8. Warranty Disclaimer
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+AND NON-INFRINGEMENT.
+
+9. Limitation of Liability
+IN NO EVENT SHALL ROUTEMEDIA® BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+10. Termination
+Any violation of this license automatically terminates the granted rights.
+Upon termination, all use of the Software must cease immediately.
+
+11. Governing Law
+This license shall be governed by and construed in accordance with the laws of Germany.
+
+12. Contact / Licensing
+For licensing, partnerships, or commercial inquiries:
+direkt@route-media.info
+
+Note:
+Versions prior to 4.0.1 were licensed under the MIT License and remain under those terms.
+This license applies to version 4.0.1 and all subsequent versions unless otherwise stated.

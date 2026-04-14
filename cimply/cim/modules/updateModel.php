@@ -1,18 +1,15 @@
 <?php
-
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of 
- *
- * @author MikeCorner ModelCtrl
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
 declare(strict_types=1);
+
 namespace Cim\Modules {
     use \Cimply\App\Settings;
     use \Cimply\Core\View\{View, Translate, Scope, Markup, Template\Enum\Pattern};

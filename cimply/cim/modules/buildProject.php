@@ -1,5 +1,15 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
+
 declare(strict_types=1);
+
 namespace Cim\Modules {
     use \Cimply\App\Settings;
     use \Cimply\Basics\{Basics, ServiceLocator\ServiceLocator, Repository\Support};
@@ -12,7 +22,7 @@ namespace Cim\Modules {
         private $currentObject, $services;
         static protected $projects = null;
         
-        function __construct(ServiceLocator $services = null)
+        function __construct(?ServiceLocator $services = null)
         {
             $this->services = $services;
             $systemSettings = Support::Cast($this->services->getService())->getSystemSettings();

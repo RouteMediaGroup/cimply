@@ -1,93 +1,121 @@
 <?php
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
+ */
 
 namespace Cimply\Core\View
 {
-	/**
-	 * Scope short summary.
-	 *
-	 * Scope description.
-	 *
-	 * @version 1.0
-	 * @author MikeCorner
-	 */
-	class Scope
-	{
+    class Scope
+    {
         use \Properties, \Cast;
-        /**
-         * Summary of $session
-         * @var mixed
-         */
-        private $type, $params, $scheme, $action, $controller, $method, $target, $theme, $tpls, $markup, $markupFile, $templating, $validation, $requires, $caching, $session;
 
-        function __construct() {}
+        private ?string $type = null;
+        private mixed $params = null;
+        private mixed $scheme = null;
+        private mixed $action = null;
+        private mixed $controller = null;
+        private mixed $method = null;
+        private mixed $target = null;
+        private mixed $theme = null;
+        private mixed $tpls = null;
+        private mixed $markup = null;
+        private mixed $markupFile = null;
+        private mixed $templating = null;
+        private ?array $validation = null;
+        private mixed $requires = null;
+        private mixed $caching = null;
+        private mixed $session = null;
 
-        /**
-         * Summary of Cast
-         * @param mixed $mainObject
-         * @param mixed $selfObject
-         * @return mixed
-         */
-        final static function Cast($mainObject, $selfObject = self::class): self {
+        public function __construct()
+        {
+        }
+
+        final public static function Cast($mainObject, $selfObject = self::class): self
+        {
             return self::Cull($mainObject, $selfObject);
         }
 
-        function getType(): ?string {
+        public function getType(): ?string
+        {
             return $this->type;
         }
 
-        function getParams($key = null) {
-            return $this->params[$key] ?? $this->params;
+        public function getParams($key = null): mixed
+        {
+            if ($key !== null && \is_array($this->params)) {
+                return $this->params[$key] ?? null;
+            }
+
+            return $this->params;
         }
 
-        function getScheme() {
+        public function getScheme(): mixed
+        {
             return $this->scheme;
         }
 
-        function getAction() {
+        public function getAction(): mixed
+        {
             return $this->action;
         }
-        
-        function getController() {
+
+        public function getController(): mixed
+        {
             return $this->controller;
         }
-        
-        function getMethod() {
+
+        public function getMethod(): mixed
+        {
             return $this->method;
         }
-        
-        function getTarget() {
+
+        public function getTarget(): mixed
+        {
             return $this->target;
         }
 
-        function getTpls() {
+        public function getTpls(): mixed
+        {
             return $this->tpls;
         }
 
-        function getMarkup() {
+        public function getMarkup(): mixed
+        {
             return $this->markup;
         }
 
-        function getMarkupFile() {
+        public function getMarkupFile(): mixed
+        {
             return $this->markupFile;
         }
 
-        function getTemplating() {
+        public function getTemplating(): mixed
+        {
             return $this->templating ?? null;
-        }        
+        }
 
-        function getRequires() {
+        public function getRequires(): mixed
+        {
             return $this->requires;
         }
-        
-        function getValidation(): ?array {
+
+        public function getValidation(): ?array
+        {
             return $this->validation ?? [];
         }
-        
-        function getSession() {
+
+        public function getSession(): mixed
+        {
             return $this->session;
         }
-        
-        function getCaching() {
+
+        public function getCaching(): mixed
+        {
             return $this->caching;
         }
     }

@@ -1,9 +1,11 @@
 <?php
-
 /*
- * CIMPLY FrameWork V 1.0.0.1
- * Michael Eckebrecht <info@cimply.work>
- * Copyright (c) 2010 - 2016 RouteMedia. All rights reserved.
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
 namespace Cimply\Core\Gui {
@@ -19,7 +21,7 @@ namespace Cimply\Core\Gui {
         protected $params = null, $Pattern = [], $Collections = [], $view = null, $useTemplateFor;
         private static $viewModel, $currentObject = array(), $annotations;
 
-        function __construct(View $view = null) {
+        function __construct(?View $view = null) {
             $this->view = $view;
         }
 
@@ -107,14 +109,15 @@ namespace Cimply\Core\Gui {
          *
          */
         private static function ExternalFile($templateFile = null) {
-            if (Scope::GetCurrentObject('external') && (!(is_file($templateFile)))) {
-                $tmp = explode("_", Scope::GetFileBaseName());
+            if (View::$externalFile && (!\is_file((string)$templateFile))) {
+                $tmp = explode("_", (string)View::GetFileBaseName());
                 $fileName = array_pop($tmp);
                 $files = array();
                 $addValue = "";
+                $basePath = View::GetBasePath();
                 foreach ($tmp as $key => $value) {
                     $addValue.= $value . '/';
-                    is_file(Scope::GetBasePath() . $addValue . $fileName) ? $files[] = Scope::GetBasePath() . $addValue . $fileName : null;
+                    is_file($basePath . $addValue . $fileName) ? $files[] = $basePath . $addValue . $fileName : null;
                 }
                 return end($files);
             } else {
@@ -163,7 +166,7 @@ namespace Cimply\Core\Gui {
          *
          */
         public function newTemplate($tplPath = null, $target = true) {
-            $path = View::GetStaticProperty(AppSettings::PROJECTPATH).'\\'.\str_replace('_','\\', $tplPath);
+            $path = View::GetBasePath() . \str_replace('_', DIRECTORY_SEPARATOR, (string)$tplPath);
             $parsingTpl = str_replace('&gt;', '>', $tplPath);
             if ($target) {
                 if ($view = View::Create($parsingTpl)) {
@@ -179,7 +182,9 @@ namespace Cimply\Core\Gui {
                 ob_start();
                 foreach ($matches[1] as $key => $value) {
                     $tplFile[$key] = str_replace('_', '/', View::GetTemplatePath($value, $matches[0][$key]));
-                    print(str_replace($matches[0][$key], \file_get_contents($filePath), $tpl));
+                    if (isset($tplFile[$key]) && \is_file($tplFile[$key])) {
+                        print(str_replace($matches[0][$key], \file_get_contents($tplFile[$key]), (string)$tpl));
+                    }
                     $tpl = $this->newTemplate(ob_get_contents(), false);
                 }
                 ob_end_clean();

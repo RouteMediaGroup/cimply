@@ -1,10 +1,13 @@
 <?php
-
-/**
- * Klasse zur Erstellung der PDF Dialoge.
- *
- * @package    Core
+/*
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
+
 class DialogPDFCreator
 {
     /**
@@ -72,7 +75,7 @@ class DialogPDFCreator
      * @param string $dialogName
      * @param Step $step
      */
-    public function __construct($workflowid, $simulation, $dialogName, Step $step = null)
+    public function __construct($workflowid, $simulation, $dialogName, ?Step $step = null)
     {
         if (!$dialogName) {
             throw new JobRouterException('Missing parameter: dialogName');
@@ -914,7 +917,7 @@ class DialogPDFCreator
             foreach ($row as $columnName => $columnValue) {
                 // GRL / 07.07.2015 / Bug #5126 Umlauts will be displayed in table header correctly
                 if (CONST_DB_SERVER == DBFactory::DB_SQLSRV) {
-                    $columnName = utf8_encode($columnName);
+                    $columnName = _utf8_encode($columnName);
                 }
                 $encodedData[$rowNum][$columnNames[$columnName]] = _utf8_encode($columnValue);
             }

@@ -1984,8 +1984,8 @@ class Crypt_Base
                 break;
         }
 
-        // Create the $inline function and return its name as string. Ready to run!
-        return create_function('$_action, &$self, $_text', $init_crypt . 'if ($_action == "encrypt") { ' . $encrypt . ' } else { ' . $decrypt . ' }');
+        // Create the inline function with a native closure for PHP 8 compatibility.
+        return eval('return function ($_action, &$self, $_text) { ' . $init_crypt . 'if ($_action == "encrypt") { ' . $encrypt . ' } else { ' . $decrypt . ' } };');
     }
 
     /**

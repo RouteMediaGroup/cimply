@@ -1,83 +1,53 @@
 <?php
-
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Cimply.Work Business Framework
+ * Version 4.0.1
+ * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
+ * Proprietary software. Use permitted only under valid commercial license.
+ * Unauthorized copying, modification, distribution, or use is prohibited.
+ * Contact: direkt@route-media.info
  */
 
-/**
- * Description of CIM
- *
- * @author MikeCorner
- */
 namespace {
 
     trait Cast {
-        /**
-         * Summary of Cull
-         * @param mixed $mainObject
-         * @param mixed $selfObject
-         * @param mixed $abstractClass
-         * @return mixed
-         */
-        public static function Cull($mainObject, $selfObject = null, $abstractClass = false) {
-            $newObject = null;
-            try {
-                is_array($mainObject) ? null : ( ($mainObject instanceof $selfObject) ? $newObject = $mainObject :
-                    ( (new ReflectionClass($selfObject))->isAbstract() ? $abstractClass = true : $newObject = new $selfObject ) );
+        public static function Cull($mainObject, $selfObject = null, $searchNestedObjects = false) {
+            $selfObject = $selfObject ?? static::class;
 
-                /*$newObject = static::recursiveWalker($newObject, $mainObject, $selfObject, $abstractClass);*/
-                foreach((array)$mainObject as $value) {
-                    ($value instanceof $selfObject) ?
-                        $newObject = ($abstractClass === true) ? self::iterateAbstractClass($value, $selfObject) : $value : null;
+            if (!\is_string($selfObject) || $selfObject === '') {
+                return null;
+            }
+
+            if ($mainObject instanceof $selfObject) {
+                return $mainObject;
+            }
+
+            $values = [];
+            if (\is_array($mainObject) || $mainObject instanceof \Traversable) {
+                $values = (array)$mainObject;
+            } elseif (\is_object($mainObject)) {
+                $values = \get_object_vars($mainObject);
+            }
+
+            foreach ($values as $value) {
+                if ($value instanceof $selfObject) {
+                    return $value;
+                }
+
+                if ($searchNestedObjects && (\is_array($value) || \is_object($value) || $value instanceof \Traversable)) {
+                    $nestedValue = static::Cull($value, $selfObject, true);
+                    if ($nestedValue instanceof $selfObject) {
+                        return $nestedValue;
+                    }
                 }
             }
-            catch(\Exception $ex) {
-                throw new \Exception($ex->getMessage());
-            }
-            return $newObject;
-        }
 
-        /**
-         * Summary of iterateAbstractClass
-         * @param mixed $abstractClassClass
-         * @param mixed $selfObject
-         * @return mixed
-         */
-        private static function iterateAbstractClass($abstractClassClass, $selfObject) {
-            $result = null;
-            foreach($abstractClassClass as $key => $value) {
-                (key($selfObject) == $key) ? $result = $value : null;
-            }
-            return $result;
-        }
-
-        /**
-         * Summary of recursiveWalker
-         * @param mixed $newObject
-         * @param mixed $mainObject
-         * @param mixed $selfObject
-         * @param mixed $abstractClass
-         * @return mixed
-         */
-        private static function recursiveWalker(&$newObject, $mainObject, $selfObject, $abstractClass, $count = 0) {
-            /*foreach((array)$mainObject as $value) {
-            ($value instanceof $selfObject) ?
-                $newObject = ($abstractClass === true) ? self::iterateAbstractClass($value, $selfObject) : $value : null;
-            }*/
             try {
-               foreach((array)$mainObject as $value) {
-                    ($value instanceof $selfObject) ? 
-                        ( $newObject = ($abstractClass === true) ? self::iterateAbstractClass($value, $selfObject) : $value )
-                        : ( ( is_object($value) && $count<= 0 ) ? $newObject = self::recursiveWalker($newObject, $value, $selfObject, $abstractClass, $count++) : $value );
-               }
-            } catch(\Exception $ex) {
-                throw new \Exception($ex->getMessage());
+                $reflection = new \ReflectionClass($selfObject);
+                return $reflection->isInstantiable() ? $reflection->newInstance() : null;
+            } catch (\Throwable) {
+                return null;
             }
-
-            return $newObject;
         }
-
     }
 }
