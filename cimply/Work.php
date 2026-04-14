@@ -27,15 +27,25 @@ namespace Cimply {
 
             self::autoLoader(function (array $usings = []) use ($assembly): void {
                 $roots = array_merge($usings, $assembly);
+                $normalizedRoots = [];
 
                 foreach ($roots as $root) {
                     $normalized = self::normalizeRootPath($root);
                     if ($normalized !== null) {
-                        self::$autoloadRoots[] = $normalized;
+                        $normalizedRoots[] = $normalized;
                     }
                 }
 
-                self::$autoloadRoots = array_values(array_unique(self::$autoloadRoots));
+                $normalizedRoots = array_values(array_unique($normalizedRoots));
+
+                if ($normalizedRoots !== []) {
+                    $existingRoots = array_values(array_filter(
+                        self::$autoloadRoots,
+                        static fn(string $root): bool => !in_array($root, $normalizedRoots, true)
+                    ));
+
+                    self::$autoloadRoots = array_merge($normalizedRoots, $existingRoots);
+                }
 
                 if (self::$autoloadRoots !== []) {
                     set_include_path(get_include_path() . PATH_SEPARATOR . implode(PATH_SEPARATOR, self::$autoloadRoots));
