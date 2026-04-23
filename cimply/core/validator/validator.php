@@ -1,7 +1,7 @@
 <?php
 /*
  * Cimply.Work Business Framework
- * Version 4.0.1
+ * Version 4.0.2
  * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
  * Proprietary software. Use permitted only under valid commercial license.
  * Unauthorized copying, modification, distribution, or use is prohibited.
@@ -51,74 +51,88 @@ namespace Cimply\Core\Validator {
          */
         function run(): self
         {
-            if(isset($this->validation_rules)) {
-                foreach(new \ArrayIterator($this->validation_rules) as $var => $opt)
-                {
-                    $opt = (array)$opt;
-                    !($opt['required'] == true) ?? $this->isSet($var);
-                    
-                    if( array_key_exists('trim', $opt) && $opt['trim'] == true )
-                    {
-                        isset($this->source[$var]) && !(empty($this->source[$var])) ? $this->source[$var] = (is_string($this->source[$var]) ? trim( $this->source[$var] ) : $this->source[$var] = \JsonDeEncoder::Encode($this->source[$var])) : $this->source[$var] = null;
-                        $this->results[$var] = $this->source[$var];
+            if (empty($this->validation_rules)) {
+                return $this;
+            }
+
+            $this->source = \is_array($this->source) ? $this->source : (array)$this->source;
+
+            foreach ($this->validation_rules as $var => $options) {
+                $opt = (array)$options;
+                $type = strtolower((string)($opt['type'] ?? ''));
+
+                if (($opt['required'] ?? false) === true) {
+                    $this->isSet((string)$var);
+                }
+
+                if (($opt['trim'] ?? false) === true) {
+                    $value = $this->source[$var] ?? null;
+                    if ($value !== null && $value !== '') {
+                        $this->source[$var] = \is_string($value) ? \trim($value) : \JsonDeEncoder::Encode($value);
+                    } else {
+                        $this->source[$var] = null;
                     }
 
-                    switch($opt['type'])
-                    {
-                        case 'email':
-                            $this->checkEMail($var, (object)$opt);
-                            break;
+                    $this->results[$var] = $this->source[$var];
+                }
 
-                        case 'url':
-                            $this->checkUrl($var, (object)$opt);
-                            break;
-
-                        case 'numeric':
-                        case 'int':
-                        case 'tinyint':
-                        case 'bigint':
-                        case 'mediumint':
-                        case 'smallint':
-                            $this->checkNumeric($var, (object)$opt);
-                            break;
-
-                        case 'string':
-                        case 'char':
-                        case 'varchar':
-                        case 'tinyblob':
-                        case 'smallblob':
-                        case 'bigblob':
-                        case 'text':
-                            $this->checkStrings($var, (object)$opt);
+                $optObject = (object)$opt;
+                switch ($type) {
+                    case 'email':
+                        $this->checkEMail($var, $optObject);
                         break;
 
-                        case 'json':
-                            $this->checkJson($var, (object)$opt);
+                    case 'url':
+                        $this->checkUrl($var, $optObject);
                         break;
 
-                        case 'float': case 'double':
-                            $this->checkFloats($var, (object)$opt);
-                            break;
+                    case 'numeric':
+                    case 'int':
+                    case 'tinyint':
+                    case 'bigint':
+                    case 'mediumint':
+                    case 'smallint':
+                        $this->checkNumeric($var, $optObject);
+                        break;
 
-                        case 'bool':
-                        case 'bit':
-                            $this->checkBits($var, (object)$opt);
-                            break;
+                    case 'string':
+                    case 'char':
+                    case 'varchar':
+                    case 'tinyblob':
+                    case 'smallblob':
+                    case 'bigblob':
+                    case 'text':
+                        $this->checkStrings($var, $optObject);
+                        break;
 
-                        case 'ipv4':
-                            $this->checkIpv4($var, (object)$opt);
-                            break;
+                    case 'json':
+                        $this->checkJson($var, $optObject);
+                        break;
 
-                        case 'ipv6':
-                            $this->checkIpv6($var, (object)$opt);
-                            break;
+                    case 'float':
+                    case 'double':
+                        $this->checkFloats($var, $optObject);
+                        break;
 
-                        case 'Guid':
-                            $this->checkGuid($var, (object)$opt);
-                            break;
-                    }
+                    case 'bool':
+                    case 'bit':
+                        $this->checkBits($var, $optObject);
+                        break;
+
+                    case 'ipv4':
+                        $this->checkIpv4($var, $optObject);
+                        break;
+
+                    case 'ipv6':
+                        $this->checkIpv6($var, $optObject);
+                        break;
+
+                    case 'guid':
+                        $this->checkGuid($var, $optObject);
+                        break;
                 }
             }
+
             return $this;
         }
 

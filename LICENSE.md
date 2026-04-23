@@ -13,7 +13,7 @@ No license to use, copy, modify, distribute, sublicense, host, sell, or commerci
 Any right of use, project deployment, redistribution, commercial exploitation, or derivative work requires a separate written agreement issued exclusively by RouteMedia - Digital Solutions.
 
 4. Version applicability
-This proprietary licensing model applies to Cimply.Work version 4.0.1 and all later versions unless RouteMedia - Digital Solutions publishes a newer written licensing statement.
+This proprietary licensing model applies to Cimply.Work version 4.0.2 and all later versions unless RouteMedia - Digital Solutions publishes a newer written licensing statement.
 
 5. Third-party code
 Bundled third-party components remain subject to their own licenses. Their respective license terms continue to apply only to those third-party components.

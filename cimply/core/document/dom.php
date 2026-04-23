@@ -1,7 +1,7 @@
 <?php
 /*
  * Cimply.Work Business Framework
- * Version 4.0.1
+ * Version 4.0.2
  * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
  * Proprietary software. Use permitted only under valid commercial license.
  * Unauthorized copying, modification, distribution, or use is prohibited.
@@ -36,7 +36,7 @@ namespace Cimply\Core\Document
             $dom->encoding='UTF-8';
             $dom->preserveWhiteSpace=false;
             if(isset($source)) {
-                $dom->loadXML($source);
+                $dom->loadMarkup((string)$source);
             }
             return $dom;
         }

@@ -1,7 +1,7 @@
 <?php
 /*
  * Cimply.Work Business Framework
- * Version 4.0.1
+ * Version 4.0.2
  * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
  * Proprietary software. Use permitted only under valid commercial license.
  * Unauthorized copying, modification, distribution, or use is prohibited.
@@ -289,14 +289,26 @@ namespace Cimply\Core\View {
         public static function ParseTplVars($template = null, $vars = null) : ?string
         {
             if($template !== null) {
-                preg_match_all((string)self::GetStaticProperty(PatternSettings::PARAM), (string)$template, $matches);
+                $pattern = (string)self::GetStaticProperty(PatternSettings::PARAM);
+                if ($pattern === '') {
+                    return $template;
+                }
+
+                preg_match_all($pattern, (string)$template, $matches);
                 $lookup = \is_array($vars) ? $vars : self::$vars;
+                $replacements = [];
+
                 if (isset($matches[1]) && count($matches[1]) > 0) {
                     foreach ($matches[1] as $key => $value) {
-                        if (array_key_exists($value, $lookup)) {
-                            $template = str_replace($matches[0][$key], Translate::WordTranslation($lookup[$value]) ?? null, $template);
+                        if (\array_key_exists($value, $lookup)) {
+                            $translated = Translate::WordTranslation($lookup[$value]);
+                            $replacements[$matches[0][$key]] = self::normalizeTemplateValue($translated ?? $lookup[$value]);
                         }
                     }
+                }
+
+                if ($replacements !== []) {
+                    $template = strtr((string)$template, $replacements);
                 }
             }
             return $template;
@@ -306,15 +318,42 @@ namespace Cimply\Core\View {
         {
             if($template !== null) {
                 $template = self::ParseTplVars($template);
-                preg_match_all((string)self::GetStaticProperty(PatternSettings::MODUL), (string)$template, $matches);
+                $pattern = (string)self::GetStaticProperty(PatternSettings::MODUL);
+                if ($pattern === '') {
+                    return (string)$template;
+                }
+
+                preg_match_all($pattern, (string)$template, $matches);
+                $replacements = [];
+
                 if (isset($matches[1]) && count($matches[1]) > 0) {
-                    //$explAttr = explode(':', $matches[1][0]);
                     foreach ($matches[1] as $key => $value) {
-                        $template = str_replace($matches[0][$key], self::Create($matches[0][$key]) ?? null, $template);
+                        $replacements[$matches[0][$key]] = self::Create($matches[0][$key]) ?? '';
                     }
+                }
+
+                if ($replacements !== []) {
+                    $template = strtr((string)$template, $replacements);
                 }
             }
             return $template;
+        }
+
+        private static function normalizeTemplateValue(mixed $value): string
+        {
+            if (\is_string($value)) {
+                return $value;
+            }
+
+            if (\is_scalar($value) || $value === null) {
+                return (string)$value;
+            }
+
+            if (\is_array($value)) {
+                return (string)(\JsonDeEncoder::Encode($value) ?? '');
+            }
+
+            return \is_object($value) && \method_exists($value, '__toString') ? (string)$value : '';
         }
 
         public static function ParseTplAttr($element = null) : ? array

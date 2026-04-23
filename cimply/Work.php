@@ -1,7 +1,7 @@
 <?php
 /*
  * Cimply.Work Business Framework
- * Version 4.0.1
+ * Version 4.0.2
  * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
  * Proprietary software. Use permitted only under valid commercial license.
  * Unauthorized copying, modification, distribution, or use is prohibited.
@@ -10,7 +10,7 @@
 
 namespace Cimply {
     class Work {
-        public const VERSION = '4.0.1';
+        public const VERSION = '4.0.2';
 
         public bool $error = false;
 

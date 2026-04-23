@@ -1,7 +1,7 @@
 {
     "name": "routemedia-digital-solutions/cimply",
     "description": "Cimply is the proprietary PHP business framework by RouteMedia - Digital Solutions for digital business applications and automation.",
-    "version": "4.0.1",
+    "version": "4.0.2",
     "keywords": ["framework", "business", "automation", "php"],
     "type": "library",
     "license": "proprietary",

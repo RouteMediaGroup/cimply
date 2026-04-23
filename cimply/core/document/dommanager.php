@@ -1,7 +1,7 @@
 <?php
 /*
  * Cimply.Work Business Framework
- * Version 4.0.1
+ * Version 4.0.2
  * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
  * Proprietary software. Use permitted only under valid commercial license.
  * Unauthorized copying, modification, distribution, or use is prohibited.
@@ -15,22 +15,143 @@ namespace Cimply\Core\Document {
      * Summary of DomManager
      */
     abstract class DomManager extends \DOMDocument {
+        private const LEGACY_HTML_OPTIONS = LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD;
+        private const NATIVE_HTML_OPTIONS = LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED;
         
         final static function Cast($mainObject, $selfObject = self::class): self {
             return Core::Cast($mainObject, $selfObject, true);
         }
 
         function createDomElement($source, ?\DOMNode $domDocument = null) {
-            libxml_use_internal_errors(true);
-            $domDocument ?? $domDocument = \self;
-            $tmpDoc = new \DOMDocument();
-            $tmpDoc->recover = true;
-            $tmpDoc->strictErrorChecking = false;
-            $tmpDoc->loadHTML($source, 0);
-            foreach ($tmpDoc->getElementsByTagName('body')->item(0)->childNodes as $node) {
-                $node = $domDocument->importNode($node, false);
-                $domDocument->appendChild($node);
+            $target = $domDocument instanceof \DOMNode ? $domDocument : $this;
+            $this->appendParsedMarkup((string)$source, $target);
+        }
+
+        protected static function supportsNativeHtmlParser(): bool
+        {
+            return \PHP_VERSION_ID >= 80400 && \class_exists(\Dom\HTMLDocument::class);
+        }
+
+        protected static function parseHtmlFragment(string $source): object
+        {
+            \libxml_use_internal_errors(true);
+
+            $source = trim($source);
+            if (self::supportsNativeHtmlParser()) {
+                return $source !== ''
+                    ? \Dom\HTMLDocument::createFromString($source, self::NATIVE_HTML_OPTIONS)
+                    : \Dom\HTMLDocument::createEmpty('UTF-8');
             }
+
+            $document = new \DOMDocument('1.0', 'UTF-8');
+            $document->recover = true;
+            $document->strictErrorChecking = false;
+            $document->formatOutput = false;
+            $document->preserveWhiteSpace = false;
+
+            if ($source !== '') {
+                $document->loadHTML($source, self::LEGACY_HTML_OPTIONS);
+            }
+
+            return $document;
+        }
+
+        protected static function parsedMarkupNodes(object $document): array
+        {
+            $nodes = [];
+
+            if ($document instanceof \DOMDocument) {
+                $body = $document->getElementsByTagName('body')->item(0);
+                if ($body instanceof \DOMElement) {
+                    foreach ($body->childNodes as $node) {
+                        $nodes[] = $node;
+                    }
+
+                    return $nodes;
+                }
+            }
+
+            foreach ($document->childNodes as $node) {
+                if (($node->nodeType ?? null) === XML_DOCUMENT_TYPE_NODE) {
+                    continue;
+                }
+
+                $nodes[] = $node;
+            }
+
+            if ($nodes === [] && isset($document->documentElement) && $document->documentElement !== null) {
+                $nodes[] = $document->documentElement;
+            }
+
+            return $nodes;
+        }
+
+        protected static function normalizeHtmlTagName(string $tagName): string
+        {
+            return str_contains($tagName, ':') ? $tagName : strtolower($tagName);
+        }
+
+        protected function loadMarkup(string $source): self
+        {
+            while ($this->firstChild !== null) {
+                $this->removeChild($this->firstChild);
+            }
+
+            $this->appendParsedMarkup($source, $this);
+
+            return $this;
+        }
+
+        protected function appendParsedMarkup(string $source, \DOMNode $target): void
+        {
+            $targetDocument = $target instanceof \DOMDocument ? $target : $target->ownerDocument;
+            if (!$targetDocument instanceof \DOMDocument) {
+                return;
+            }
+
+            $parsedDocument = self::parseHtmlFragment($source);
+            foreach (self::parsedMarkupNodes($parsedDocument) as $node) {
+                $clonedNode = $this->cloneParsedNode($node, $targetDocument);
+                if ($clonedNode instanceof \DOMNode) {
+                    $target->appendChild($clonedNode);
+                }
+            }
+        }
+
+        protected function cloneParsedNode(object $sourceNode, \DOMDocument $targetDocument): ?\DOMNode
+        {
+            $nodeType = $sourceNode->nodeType ?? null;
+
+            return match ($nodeType) {
+                XML_ELEMENT_NODE => $this->cloneParsedElement($sourceNode, $targetDocument),
+                XML_TEXT_NODE, XML_CDATA_SECTION_NODE => $targetDocument->createTextNode((string)($sourceNode->textContent ?? '')),
+                XML_COMMENT_NODE => $targetDocument->createComment((string)($sourceNode->textContent ?? '')),
+                default => null,
+            };
+        }
+
+        protected function cloneParsedElement(object $sourceNode, \DOMDocument $targetDocument): \DOMElement
+        {
+            $nodeName = self::normalizeHtmlTagName((string)($sourceNode->nodeName ?? 'div'));
+            $element = $targetDocument->createElement($nodeName);
+
+            if (isset($sourceNode->attributes)) {
+                foreach ($sourceNode->attributes as $attribute) {
+                    $attributeName = self::normalizeHtmlTagName((string)($attribute->nodeName ?? ''));
+                    $element->setAttribute($attributeName, (string)($attribute->nodeValue ?? ''));
+                }
+            }
+
+            if (isset($sourceNode->childNodes)) {
+                foreach ($sourceNode->childNodes as $childNode) {
+                    $clonedChild = $this->cloneParsedNode($childNode, $targetDocument);
+                    if ($clonedChild instanceof \DOMNode) {
+                        $element->appendChild($clonedChild);
+                    }
+                }
+            }
+
+            return $element;
         }
 
         /**
@@ -167,7 +288,11 @@ namespace Cimply\Core\Document {
          * @param \DOMElement $domElem
          * @param mixed $attrValue
          */
-        protected function setAttributes(?\DOMElement $domElem = null, $attrValue): void {
+        protected function setAttributes(?\DOMElement $domElem, $attrValue = []): void {
+            if (!$domElem instanceof \DOMElement || !\is_iterable($attrValue)) {
+                return;
+            }
+
             foreach($attrValue as $key => $value) {
                 $this->setAttribute($domElem, $key, $value);
             }
@@ -181,8 +306,7 @@ namespace Cimply\Core\Document {
          * @return View
          */
         protected function setAttribute(\DOMElement $domElem, $attrName, $attrValue): self {
-            $domAttribute = $domElem->setAttribute($attrName, $attrValue);
-            $domElem->appendChild($domAttribute);
+            $domElem->setAttribute($attrName, $attrValue);
             return $this;
         }
 

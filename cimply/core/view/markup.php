@@ -1,7 +1,7 @@
 <?php
 /*
  * Cimply.Work Business Framework
- * Version 4.0.1
+ * Version 4.0.2
  * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
  * Proprietary software. Use permitted only under valid commercial license.
  * Unauthorized copying, modification, distribution, or use is prohibited.
@@ -58,7 +58,7 @@ namespace Cimply\Core\View {
             parent::__construct();
         }
 
-        public function buildHTMLFromContext($element = "div", array $fields, $attr = "", $row = 1)
+        public function buildHTMLFromContext($element = "div", array $fields = [], $attr = "", $row = 1)
         {
             $hidden = array();
             $inputfields = array();
@@ -108,7 +108,9 @@ namespace Cimply\Core\View {
                 } else {
                     $hidden[$key] = $this->buildField(
                         empty($value[$tagName]["field"]) ? "input" : $value[$tagName]["field"],
-                        isset($value[$tagName]["type"]) ? $value[$tagName]["type"] : (isset($value["autoincrement"]) && $value["autoincrement"] || isset($value["index"]) && $value["index"]) ? "hidden" : "text",
+                        isset($value[$tagName]["type"])
+                            ? $value[$tagName]["type"]
+                            : (((isset($value["autoincrement"]) && $value["autoincrement"]) || (isset($value["index"]) && $value["index"])) ? "hidden" : "text"),
                         empty($value[$tagName]["name"]) ? Translate::WordTranslation($key) : Translate::WordTranslation($value[$tagName]["name"]),
                         empty($value[$tagName]["id"]) ? "field".Translate::WordTranslation($key) : "field".Translate::WordTranslation($value[$tagName]["id"]),
                         empty($value[$tagName]["label"]) ? $key : $value[$tagName]["label"],
@@ -157,7 +159,7 @@ namespace Cimply\Core\View {
             return $docSource;
         }
 
-        public function buildField($field = "form", $type, $name, $id, $label = array(), $properties = null, $class = null, $placeholder = null, $style = null, $disabled = null, $hide = false, $options = null, $value = null, $model = null, $namespace = null, $markupTag = null, $tabindex = "")
+        public function buildField($field = "form", $type = "", $name = "", $id = "", $label = array(), $properties = null, $class = null, $placeholder = null, $style = null, $disabled = null, $hide = false, $options = null, $value = null, $model = null, $namespace = null, $markupTag = null, $tabindex = "")
         {
             if( isset($label["attr"]) && is_array($label["attr"]) ) {
                 $label["attr"] = \ArrayParser::ArrayToString($label, "attr");
@@ -211,7 +213,7 @@ namespace Cimply\Core\View {
             return $result;
         }
 
-        public function buildHTMLTag($tag, $type = "", $name = "", $id = "", $class, $style = null, $attr = null, $value = null, $model = null, $namespace = null, $index = 0)
+        public function buildHTMLTag($tag, $type = "", $name = "", $id = "", $class = "", $style = null, $attr = null, $value = null, $model = null, $namespace = null, $index = 0)
         {
             if($type == "single"):
                 $fieldHTML = $this->CustomSingleTag($tag, $id, $name, $value, $class, $style, $attr, $index);
@@ -228,16 +230,16 @@ namespace Cimply\Core\View {
             //$docSourceHTML = \mb_convert_encoding('<'.$field.'>'.$source.'</'.$field.'>', 'HTML-ENTITIES', 'UTF-8');
             $docSourceHTML = ('<'.$field.'>'.$source.'</'.$field.'>');
             $docSource = self::GetCurrentMarkup($docSourceHTML);
-            $sourceXpath = new \DOMXPath($docSource);
-            $sourceNodes = $sourceXpath->query('//'.$field.'/*');
+            $sourceRoot = $docSource->getElementsByTagName($field)->item(0);
+            $sourceNodes = $sourceRoot instanceof \DOMNode ? $sourceRoot->childNodes : $docSource->childNodes;
 
             //$docMarkupHTML = mb_convert_encoding($this->markup, 'HTML-ENTITIES', 'UTF-8');
             $docMarkupHTML = ($this->markup);
             $docMarkup = self::GetCurrentMarkup($docMarkupHTML);
-            $markupXpath = new \DOMXPath($docMarkup);
-            $markupNodes = $markupXpath->query('//'.$field.'/*');
+            $markupRoot = $docMarkup->getElementsByTagName($field)->item(0);
+            $markupNodes = $markupRoot instanceof \DOMNode ? $markupRoot->childNodes : $docMarkup->childNodes;
 
-            for ($i = 0; $i <= $sourceNodes->length; $i++) {
+            for ($i = 0; $i < $sourceNodes->length; $i++) {
                 $output.= $this->mergeNodes($docMarkup, $sourceNodes, $markupNodes, $i);
             }
             return $output;
@@ -332,13 +334,13 @@ namespace Cimply\Core\View {
             //ToDo: Lade neue Konfig und nicht �ber System
             $filePath = \File::GetFile(System::GetItems("Project","Path")."/".$path.$template);
             $markup =  $filePath != false ? $filePath : $template;
-            $domMarkup = self::GetCurrentMarkup(mb_convert_encoding($markup, "HTML-ENTITIES", "UTF-8"));
+            $domMarkup = self::GetCurrentMarkup((string)$markup);
 
             $resultDom = new \DOMDocument("1.0", "utf-8");
             $resultDom->formatOutput = true;
 
             foreach($source as $key => $value) {
-                $domDoc = self::GetCurrentMarkup(mb_convert_encoding("<".$selector.">".$value."</".$selector.">", "HTML-ENTITIES", "UTF-8"));
+                $domDoc = self::GetCurrentMarkup("<".$selector.">".$value."</".$selector.">");
                 $this->mergeNodeElements($domDoc->getElementsByTagName($selector)->item(0), $domMarkup, $resultDom);
             }
 

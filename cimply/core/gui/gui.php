@@ -1,7 +1,7 @@
 <?php
 /*
  * Cimply.Work Business Framework
- * Version 4.0.1
+ * Version 4.0.2
  * Copyright (c) 2012-2026 RouteMedia®. All rights reserved.
  * Proprietary software. Use permitted only under valid commercial license.
  * Unauthorized copying, modification, distribution, or use is prohibited.
@@ -132,30 +132,62 @@ namespace Cimply\Core\Gui {
          *
          */
         public function preparing($template = null) : ?String {
-            $params = array();
-            $model = array();
-            $getAttr = array();
-            $getParams = array();
-            if($templating = Scope::Cast($this->view)->getTemplating()) {
-                foreach ($templating as $key => $value) {
-                    $tplAttr = View::ParseTplAttr($key);
-                    $attr = end($tplAttr);
-                    $attrName = array_keys($attr)[0];
-                    $attrValue = $attr[$attrName];
-                    $tagName = key($tplAttr);
-
-                    $globalParams = \JsonDeEncoder::Decode(Scope::Cast(View::GetStaticProperty('scope'))->getParams(), true) ?? [];
-                    //$tpl = is_array($templating[$key]['tpl']) ?? null ? array_merge($templating[$key]['tpl'] ?? [], $value) : [];
-                    $getAttr = isset($value['attr']) ? ["attr" => \JsonDeEncoder::Decode($value['attr'], true)] : [];
-                    $getParams = isset($value['params']) ? \JsonDeEncoder::Decode($value['params'], true) : [];
-                    isset($value['model']) ? $getModel = self::$viewModel->GetDataModel($value['model']) : null;
-                    $params = \array_merge($globalParams, $getAttr, $getParams);
-                    $template = Dom::ReplaceContentByView(
-                        $this->getLibs($template, false), $tagName, $attrName, $attrValue, View::ParseTplVars(View::ParseTplView($this->newTemplate($value['tpl'], true)), $params), $params, $model
-                    );
-                }
+            $scope = Scope::Cast($this->view);
+            $templating = $scope->getTemplating();
+            if (!$templating) {
+                return $this->getLibs($template);
             }
-            return $this->getLibs($template);
+
+            $globalParams = \JsonDeEncoder::Decode(Scope::Cast(View::GetStaticProperty('scope'))->getParams(), true) ?? [];
+            $preparedTemplate = $this->getLibs($template, false);
+
+            foreach ($templating as $key => $value) {
+                $tplAttr = View::ParseTplAttr($key);
+                $attr = end($tplAttr);
+
+                if (!\is_array($attr) || $attr === []) {
+                    continue;
+                }
+
+                $attrName = array_key_first($attr);
+                $tagName = key($tplAttr);
+
+                if (!\is_string($attrName) || $attrName === '' || !\is_string($tagName) || $tagName === '') {
+                    continue;
+                }
+
+                $params = $globalParams;
+                if (isset($value['attr'])) {
+                    $decodedAttr = \JsonDeEncoder::Decode($value['attr'], true);
+                    if (\is_array($decodedAttr) && $decodedAttr !== []) {
+                        $params['attr'] = $decodedAttr;
+                    }
+                }
+
+                if (isset($value['params'])) {
+                    $decodedParams = \JsonDeEncoder::Decode($value['params'], true);
+                    if (\is_array($decodedParams) && $decodedParams !== []) {
+                        $params = \array_merge($params, $decodedParams);
+                    }
+                }
+
+                $viewTemplate = View::ParseTplVars(
+                    View::ParseTplView($this->newTemplate($value['tpl'] ?? '', true)),
+                    $params
+                );
+
+                $preparedTemplate = Dom::ReplaceContentByView(
+                    $preparedTemplate,
+                    $tagName,
+                    $attrName,
+                    $attr[$attrName],
+                    $viewTemplate,
+                    $params,
+                    []
+                );
+            }
+
+            return $this->getLibs($preparedTemplate);
         }
 
         /**
